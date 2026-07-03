@@ -48,7 +48,11 @@
                     >
                   </td>
                   <td>{{ server.fields.Products.fields.Title }}</td>
-                  <td>{{ dayjs(server.fields.NextCollect).fromNow() }}</td>
+                  <td>
+                    {{
+                      dayjs(server.fields.NextCollect).add(1, "day").fromNow()
+                    }}
+                  </td>
                   <td class="btn" @click="subscribe(server)">ต่ออายุ</td>
                 </tr>
               </tbody>
@@ -177,7 +181,10 @@
             <p @click="copyText" class="btn">
               คัดลอก<i class="fa-duotone fa-solid fa-copy"></i>
             </p>
-            <p @click="extendSubscribe()" class="btn">
+            <p
+              @click="extendSubscribe(server.id, server.fields.NextCollect)"
+              class="btn"
+            >
               ต่ออายุ <i class="fa-duotone fa-solid fa-calendar-plus"></i>
             </p>
           </div>
@@ -365,6 +372,8 @@ const extendSubscribe = (id, CollectDate) => {
       NextCollect: NextCollect,
     },
   };
+
+  console.log(payload);
 
   axios
     .patch(
