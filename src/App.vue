@@ -3,7 +3,6 @@
     <header>
       <img class="logo" src="/imgs/logo.png" alt="logo" />
       <h1>D&D: For Us</h1>
-      <h1>ระบบสมาชิก</h1>
     </header>
     <RouterView />
   </div>
