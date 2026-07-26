@@ -198,21 +198,21 @@ watch(
   () => route.path,
   (newPath) => {
     const currentMemberID = route.params.memberID;
-    if (newPath === `/${currentMemberID}/payment`) {
+    if (newPath === `/server/${currentMemberID}/payment`) {
       showPaymentModal.value = true;
-    } else if (newPath === `/${currentMemberID}`) {
+    } else if (newPath === `/server/${currentMemberID}`) {
       showPaymentModal.value = false;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(showPaymentModal, (newVal) => {
   const currentMemberID = route.params.memberID;
-  if (newVal && route.path !== `/${currentMemberID}/payment`) {
-    router.push(`/${currentMemberID}/payment`);
-  } else if (!newVal && route.path === `/${currentMemberID}/payment`) {
-    router.push(`/${currentMemberID}`);
+  if (newVal && route.path !== `/server/${currentMemberID}/payment`) {
+    router.push(`/server/${currentMemberID}/payment`);
+  } else if (!newVal && route.path === `/server/${currentMemberID}/payment`) {
+    router.push(`/server/${currentMemberID}`);
   }
 });
 

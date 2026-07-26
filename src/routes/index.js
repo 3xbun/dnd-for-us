@@ -8,10 +8,10 @@ import ServerCreator from "../views/ServerCreator.vue";
 const routes = [
   { path: "/", component: HomeView },
   { path: "/sale", component: SaleView },
-  { path: "/new-server", component: ServerCreator },
-  { path: "/new-server/summary", component: ServerCreator },
-  { path: "/:memberID/payment", component: MemberView },
-  { path: "/:memberID", component: MemberView },
+  { path: "/server", component: ServerCreator },
+  { path: "/server/summary", component: ServerCreator },
+  { path: "/server/:memberID/payment", component: MemberView },
+  { path: "/server/:memberID", component: MemberView },
 ];
 
 const router = createRouter({

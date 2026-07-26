@@ -417,7 +417,7 @@ onMounted(() => {
       ([entry]) => {
         showSticker.value = !entry.isIntersecting;
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     observer.observe(summaryPanel.value);
   }
@@ -485,24 +485,24 @@ const isNameValid = computed(() => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath === "/new-server/summary") {
+    if (newPath === "/server/summary") {
       if (!isNameValid.value) {
-        router.replace("/new-server");
+        router.replace("/server");
       } else {
         isOrdered.value = true;
       }
-    } else if (newPath === "/new-server") {
+    } else if (newPath === "/server") {
       isOrdered.value = false;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(isOrdered, (newVal) => {
-  if (newVal && route.path !== "/new-server/summary") {
-    router.push("/new-server/summary");
-  } else if (!newVal && route.path === "/new-server/summary") {
-    router.push("/new-server");
+  if (newVal && route.path !== "/server/summary") {
+    router.push("/server/summary");
+  } else if (!newVal && route.path === "/server/summary") {
+    router.push("/server");
   }
 });
 
@@ -1353,7 +1353,9 @@ const resetForm = () => {
   border: 1px solid #db292f;
   border-radius: 1rem;
   padding: 0.8rem 1.2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(219, 41, 47, 0.15);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(219, 41, 47, 0.15);
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -32,7 +32,7 @@
         สร้างและปรับสเปคเครื่องเซิร์ฟเวอร์สำหรับแคมเปญของคุณเองอย่างรวดเร็ว
       </p>
 
-      <router-link to="/new-server">
+      <router-link to="/server">
         <button class="btn-primary">
           ปรับแต่ง & สั่งซื้อเซิร์ฟเวอร์
           <i class="fa-solid fa-chevron-right"></i>
@@ -51,7 +51,7 @@ const router = useRouter();
 
 const goToMember = () => {
   if (memberID.value.trim()) {
-    router.push(`/${memberID.value.trim().toLowerCase()}`);
+    router.push(`/server/${memberID.value.trim().toLowerCase()}`);
   }
 };
 </script>
