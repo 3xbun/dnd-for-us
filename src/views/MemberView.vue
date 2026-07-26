@@ -174,8 +174,8 @@ import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/th";
-import { onMounted, ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import BackButton from "../components/BackButton.vue";
 import QRCodeModal from "../components/QRCode.vue";
@@ -185,10 +185,36 @@ dayjs.locale("th");
 
 const stamps = [0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 20];
 
+const route = useRoute();
+const router = useRouter();
+
 const loaded = ref(false);
-const memberID = useRoute().params.memberID;
+const memberID = route.params.memberID;
 const informations = ref([]);
 const showPaymentModal = ref(false);
+
+// Sync showPaymentModal and route path
+watch(
+  () => route.path,
+  (newPath) => {
+    const currentMemberID = route.params.memberID;
+    if (newPath === `/${currentMemberID}/payment`) {
+      showPaymentModal.value = true;
+    } else if (newPath === `/${currentMemberID}`) {
+      showPaymentModal.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+watch(showPaymentModal, (newVal) => {
+  const currentMemberID = route.params.memberID;
+  if (newVal && route.path !== `/${currentMemberID}/payment`) {
+    router.push(`/${currentMemberID}/payment`);
+  } else if (!newVal && route.path === `/${currentMemberID}/payment`) {
+    router.push(`/${currentMemberID}`);
+  }
+});
 
 const renewPrice = computed(() => {
   if (!informations.value?.fields) return 0;

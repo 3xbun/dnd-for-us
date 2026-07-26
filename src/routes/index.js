@@ -10,6 +10,7 @@ const routes = [
   { path: "/sale", component: SaleView },
   { path: "/new-server", component: ServerCreator },
   { path: "/new-server/summary", component: ServerCreator },
+  { path: "/:memberID/payment", component: MemberView },
   { path: "/:memberID", component: MemberView },
 ];
 
