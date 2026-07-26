@@ -2,7 +2,7 @@
   <div class="creator-container">
     <BackButton />
 
-    <!-- Active Form View -->
+    <!-- Active Form View (Wizard Flow) -->
     <div v-if="!isOrdered" class="creator-card">
       <div class="creator-header">
         <h2>สร้างเซิร์ฟเวอร์ Foundry VTT ของคุณ</h2>
@@ -13,313 +13,396 @@
 
       <hr class="divider" />
 
-      <!-- STEP 1: Server Name -->
-      <div class="form-section">
-        <h3>1. ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
-        <p class="section-desc">
-          ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
-          (ภาษาอังกฤษและตัวเลขเท่านั้น)
-        </p>
-
-        <div class="input-wrapper">
-          <input
-            type="text"
-            v-model="serverName"
-            @input="normalizeServerName"
-            placeholder="เช่น my-epic-campaign"
-            class="styled-input"
-            maxlength="30"
-          />
-          <span class="subdomain-suffix">.dnd-for.us</span>
-        </div>
-
-        <!-- Live URL Preview -->
-        <div
-          class="url-preview"
-          :class="{
-            'preview-valid': isNameValid,
-            'preview-invalid': serverName && !isNameValid,
-          }"
-        >
-          <div class="preview-dot"></div>
-          <span class="preview-text">
-            ลิงก์เข้าเล่นของคุณจะเป็น:
-            <strong
-              >https://{{
-                serverNameNormalized || "your-campaign"
-              }}.dnd-for.us</strong
-            >
-          </span>
-        </div>
-        <p
-          v-if="serverName && serverName.length < 3"
-          class="validation-warning"
-        >
-          ⚠️ ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
-        </p>
-      </div>
-
-      <!-- STEP 2: Foundry VTT Version -->
-      <div class="form-section">
-        <h3>2. เลือกเวอร์ชัน Foundry VTT</h3>
-        <p class="section-desc">
-          กรุณาเลือกเวอร์ชันที่เหมาะสมกับระบบและ Module ที่ต้องการใช้งาน
-        </p>
-
-        <div class="grid-options">
-          <div
-            v-for="ver in versionOptions"
-            :key="ver.id"
-            class="option-card"
-            :class="{ active: selectedVersion === ver.id }"
-            @click="selectedVersion = ver.id"
-          >
-            <div class="card-radio">
-              <span class="radio-dot"></span>
-            </div>
-            <div class="card-details">
-              <div class="card-title">
-                Foundry VTT v{{ ver.id }}
-                <span v-if="ver.isLatest" class="badge-accent">แนะนำ</span>
-              </div>
-              <p class="card-desc">{{ ver.description }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3: Memory Option (RAM) -->
-      <div class="form-section">
-        <h3>3. เลือกขนาดหน่วยความจำ (Memory / RAM)</h3>
-        <p class="section-desc">
-          จำนวน RAM ที่มากขึ้นช่วยเพิ่มความลื่นไหลเมื่อมีผู้เล่นหลายคน
-          หรือเมื่อใส่ Module และฉากขนาดใหญ่
-        </p>
-
-        <div class="grid-options">
-          <div
-            v-for="mem in memoryOptions"
-            :key="mem.size"
-            class="option-card"
-            :class="{ active: selectedMemory === mem.size }"
-            @click="selectedMemory = mem.size"
-          >
-            <div class="card-radio">
-              <span class="radio-dot"></span>
-            </div>
-            <div class="card-details">
-              <div class="card-title">
-                {{ mem.size }} GB RAM
-                <span v-if="mem.isPopular" class="badge-gold">ยอดนิยม</span>
-              </div>
-              <p class="card-desc">{{ mem.recommendation }}</p>
-              <p class="card-price" v-if="mem.extraPrice > 0">
-                + ฿{{ mem.extraPrice }} / เดือน
-              </p>
-              <p class="card-price" v-else>รวมอยู่ในราคาเริ่มต้น</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 4: Custom Storage Option (SSD Space with 5 GB increments) -->
-      <div class="form-section">
-        <h3>4. กำหนดพื้นที่เก็บข้อมูล (Custom SSD Storage)</h3>
-        <p class="section-desc">
-          พื้นที่สำหรับจัดเก็บแผนที่, รูปภาพ และไฟล์เสียง (พื้นที่เริ่มต้น 5 GB
-          ฟรี! เพิ่มเติมคิดราคาเพียง ฿2 ต่อ GB)
-        </p>
-
-        <div class="custom-storage-box">
-          <div class="storage-stepper">
-            <button
-              @click="decrementStorage"
-              :disabled="selectedStorage <= minStorage"
-              class="stepper-btn"
-            >
-              <i class="fa-solid fa-minus"></i> 5 GB
-            </button>
-
-            <div class="storage-display">
-              <span class="storage-value">{{ selectedStorage }}</span>
-              <span class="storage-unit">GB SSD</span>
-            </div>
-
-            <button
-              @click="incrementStorage"
-              :disabled="selectedStorage >= maxStorage"
-              class="stepper-btn"
-            >
-              <i class="fa-solid fa-plus"></i> 5 GB
-            </button>
-          </div>
-
-          <div class="storage-slider-wrapper">
-            <input
-              type="range"
-              :min="minStorage"
-              :max="maxStorage"
-              step="5"
-              v-model.number="selectedStorage"
-              class="storage-slider"
-            />
-            <div class="slider-labels">
-              <span>{{ minStorage }} GB (เริ่มต้น)</span>
-              <span>25 GB</span>
-              <span>{{ maxStorage }} GB (สูงสุด)</span>
-            </div>
-          </div>
-
-          <div class="storage-recommendation-note">
-            <i class="fa-solid fa-circle-info"></i>
-            <span v-if="selectedStorage <= 15"
-              >เหมาะสำหรับปาร์ตี้ทั่วไป แคมเปญสั้น
-              และการใช้รูปภาพขนาดมาตรฐาน</span
-            >
-            <span v-else-if="selectedStorage <= 25"
-              >แนะนำสำหรับการทำแคมเปญระยะยาวที่มีไฟล์รูป แผนที่
-              และเพลงประกอบจำนวนมาก</span
-            >
-            <span v-else
-              >จุใจระดับตำนาน รองรับไฟล์ฉาก 4K มิวสิกเพลย์ลิสต์ขนาดใหญ่
-              และโมดูลเสริมเพียบ</span
-            >
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 5: Foundry VTT License Option -->
-      <div class="form-section">
-        <h3>5. สิทธิ์การใช้งานลิขสิทธิ์ (Foundry VTT License)</h3>
-        <p class="section-desc">
-          คุณมี License Key ของตนเองเพื่อใช้ FoundryVTT แล้วหรือไม่?
-        </p>
-
-        <div class="grid-options">
-          <div
-            class="option-card"
-            :class="{ active: licenseOption === 'own' }"
-            @click="licenseOption = 'own'"
-          >
-            <div class="card-radio">
-              <span class="radio-dot"></span>
-            </div>
-            <div class="card-details">
-              <div class="card-title">ใช้คีย์ของตัวเอง</div>
-              <p class="card-desc">
-                มี License Key ที่ซื้อมาเองแล้ว สามารถนำไปกรอกใน Server ได้ทันที
-              </p>
-              <p class="card-price">ไม่มีค่าใช้จ่ายเพิ่มเติม (+ ฿0)</p>
-            </div>
-          </div>
-
-          <div
-            class="option-card"
-            :class="{ active: licenseOption === 'borrow' }"
-            @click="licenseOption = 'borrow'"
-          >
-            <div class="card-radio">
-              <span class="radio-dot"></span>
-            </div>
-            <div class="card-details">
-              <div class="card-title">
-                ขอยืมสิทธิ์การใช้งานจากทางเรา
-                <span class="badge-accent">มีระบบช่วยเหลือ</span>
-              </div>
-              <p class="card-desc">
-                ยังไม่มีคีย์ แต่อยากเริ่มเล่นทันที ขอยืมคีย์ของ D&D For Us
-              </p>
-              <p class="card-price">+ ฿{{ borrowLicensePrice }} / เดือน</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 6: Premium Add-ons -->
-      <div class="form-section">
-        <h3>6. ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
-        <p class="section-desc">
-          เพิ่มขีดความสามารถพิเศษในการเล่นด้วยโมดูลเสริมระดับพรีเมียมที่มีประสิทธิภาพสูงสุด
-        </p>
-
-        <div class="grid-options">
-          <div
-            class="option-card"
-            :class="{ active: plutoniumAddon }"
-            @click="plutoniumAddon = !plutoniumAddon"
-          >
-            <div class="card-checkbox">
-              <span class="checkbox-box" v-if="plutoniumAddon">✔</span>
-            </div>
-            <div class="card-details">
-              <div class="card-title">
-                Premium Module: Heromancer
-                <span class="badge-gold">ยอดฮิต</span>
-              </div>
-              <p class="card-desc">
-                ปลดล็อกขีดความสามารถในการแปลงข้อมูลตัวละคร คาถา
-                และกฎเสริมจากหนังสือจริง (Physical Books) ของคุณเข้าสู่ระบบ
-                Foundry VTT เพื่อสร้างตัวละครได้ทันทีอย่างรวดเร็วและเป็นระบบ
-              </p>
-              <p class="card-price">+ ฿{{ plutoniumPrice }} / เดือน</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Price Calculation Panel -->
-      <div class="summary-panel" ref="summaryPanel">
-        <h4 class="summary-title">สรุปราคาสเปคที่คุณเลือก</h4>
-
-        <div class="summary-rows">
-          <div class="summary-row">
-            <span>เซิร์ฟเวอร์เริ่มต้น</span>
-            <span>฿{{ basePrice }}</span>
-          </div>
-          <div class="summary-row" v-if="currentMemoryExtra > 0">
-            <span>เพิ่มขนาด RAM เป็น {{ selectedMemory }} GB</span>
-            <span>+ ฿{{ currentMemoryExtra }}</span>
-          </div>
-          <div class="summary-row" v-if="currentStorageExtra > 0">
-            <span
-              >พื้นที่เพิ่มเติม (+{{ selectedStorage - minStorage }} GB)</span
-            >
-            <span>+ ฿{{ currentStorageExtra }}</span>
-          </div>
-          <div class="summary-row" v-if="licenseOption === 'borrow'">
-            <span>ค่าธรรมเนียมยืมคีย์ FoundryVTT</span>
-            <span>+ ฿{{ borrowLicensePrice }}</span>
-          </div>
-          <div class="summary-row" v-if="plutoniumAddon">
-            <span>ส่วนเสริมพรีเมียม Plutonium: Heromancer</span>
-            <span>+ ฿{{ plutoniumPrice }}</span>
-          </div>
-        </div>
-
-        <hr class="summary-divider" />
-
-        <div class="total-row">
-          <span>รวมยอดที่ต้องชำระรายเดือน</span>
-          <span class="total-price"
-            >฿{{ totalPrice }} <span class="per-month">/ เดือน</span></span
-          >
-        </div>
-      </div>
-
-      <!-- Action Button -->
-      <div class="action-section">
+      <!-- Step Navigation Header -->
+      <div class="step-navigation">
         <button
-          @click="submitOrder"
-          :disabled="!isNameValid"
-          class="submit-btn"
-          :class="{ 'btn-disabled': !isNameValid }"
+          @click="prevStep"
+          :disabled="isPrevDisabled"
+          class="nav-btn"
+          title="ย้อนกลับ"
         >
-          สั่งซื้อเซิร์ฟเวอร์สเปคนี้
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <p v-if="!isNameValid" class="button-hint">
-          * กรุณาตั้งชื่อเซิร์ฟเวอร์ที่ถูกต้องก่อนดำเนินการต่อ
-        </p>
+        <div class="step-title-container">
+          <span class="step-badge">ขั้นตอนที่ {{ currentStep }}/5</span>
+          <h3 class="step-title-text">{{ stepTitles[currentStep - 1] }}</h3>
+        </div>
+        <button
+          @click="nextStep"
+          :disabled="isNextDisabled"
+          class="nav-btn"
+          title="ถัดไป"
+        >
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Step Progress Bar -->
+      <div class="step-progress-bar">
+        <div
+          class="progress-fill"
+          :style="{ width: ((currentStep - 1) / 4) * 100 + '%' }"
+        ></div>
+        <div class="progress-dots">
+          <div
+            v-for="step in 5"
+            :key="step"
+            class="progress-dot"
+            :class="{
+              active: step <= currentStep,
+              current: step === currentStep,
+            }"
+            @click="goToStep(step)"
+          >
+            <span class="dot-number">{{ step }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Content Area -->
+      <div class="step-content-wrapper">
+        <!-- STEP 1: Server Name -->
+        <div v-show="currentStep === 1" class="step-container">
+          <div class="form-section">
+            <h3>1. ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
+            <p class="section-desc">
+              ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
+              (ภาษาอังกฤษและตัวเลขเท่านั้น)
+            </p>
+
+            <div class="input-wrapper">
+              <input
+                type="text"
+                v-model="serverName"
+                @input="normalizeServerName"
+                placeholder="เช่น my-epic-campaign"
+                class="styled-input"
+                maxlength="30"
+              />
+              <span class="subdomain-suffix">.dnd-for.us</span>
+            </div>
+
+            <!-- Live URL Preview -->
+            <div
+              class="url-preview"
+              :class="{
+                'preview-valid': isNameValid,
+                'preview-invalid': serverName && !isNameValid,
+              }"
+            >
+              <div class="preview-dot"></div>
+              <span class="preview-text">
+                ลิงก์เข้าเล่นของคุณจะเป็น:
+                <strong
+                  >https://{{
+                    serverNameNormalized || "your-campaign"
+                  }}.dnd-for.us</strong
+                >
+              </span>
+            </div>
+            <p
+              v-if="serverName && serverName.length < 3"
+              class="validation-warning"
+            >
+              ⚠️ ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
+            </p>
+          </div>
+        </div>
+
+        <!-- STEP 2: Foundry VTT Version -->
+        <div v-show="currentStep === 2" class="step-container">
+          <div class="form-section">
+            <h3>2. เลือกเวอร์ชัน Foundry VTT</h3>
+            <p class="section-desc">
+              กรุณาเลือกเวอร์ชันที่เหมาะสมกับระบบและ Module ที่ต้องการใช้งาน
+            </p>
+
+            <div class="grid-options">
+              <div
+                v-for="ver in versionOptions"
+                :key="ver.id"
+                class="option-card"
+                :class="{ active: selectedVersion === ver.id }"
+                @click="selectedVersion = ver.id"
+              >
+                <div class="card-radio">
+                  <span class="radio-dot"></span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">
+                    Foundry VTT v{{ ver.id }}
+                    <span v-if="ver.isLatest" class="badge-accent">แนะนำ</span>
+                  </div>
+                  <p class="card-desc">{{ ver.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Server Specs (Memory & SSD) -->
+        <div v-show="currentStep === 3" class="step-container">
+          <!-- Memory Option (RAM) -->
+          <div class="form-section">
+            <h3>3. เลือกขนาดหน่วยความจำ (Memory / RAM)</h3>
+            <p class="section-desc">
+              จำนวน RAM ที่มากขึ้นช่วยเพิ่มความลื่นไหลเมื่อมีผู้เล่นหลายคน
+              หรือเมื่อใส่ Module และฉากขนาดใหญ่
+            </p>
+
+            <div class="grid-options">
+              <div
+                v-for="mem in memoryOptions"
+                :key="mem.size"
+                class="option-card"
+                :class="{ active: selectedMemory === mem.size }"
+                @click="selectedMemory = mem.size"
+              >
+                <div class="card-radio">
+                  <span class="radio-dot"></span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">
+                    {{ mem.size }} GB RAM
+                    <span v-if="mem.isPopular" class="badge-gold">ยอดนิยม</span>
+                  </div>
+                  <p class="card-desc">{{ mem.recommendation }}</p>
+                  <p class="card-price" v-if="mem.extraPrice > 0">
+                    + ฿{{ mem.extraPrice }} / เดือน
+                  </p>
+                  <p class="card-price" v-else>รวมอยู่ในราคาเริ่มต้น</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Storage Option (SSD Space with 5 GB increments) -->
+          <div class="form-section">
+            <h3>4. กำหนดพื้นที่เก็บข้อมูล (Custom SSD Storage)</h3>
+            <p class="section-desc">
+              พื้นที่สำหรับจัดเก็บแผนที่, รูปภาพ และไฟล์เสียง (พื้นที่เริ่มต้น 5
+              GB ฟรี! เพิ่มเติมคิดราคาเพียง ฿2 ต่อ GB)
+            </p>
+
+            <div class="custom-storage-box">
+              <div class="storage-stepper">
+                <button
+                  @click="decrementStorage"
+                  :disabled="selectedStorage <= minStorage"
+                  class="stepper-btn"
+                >
+                  <i class="fa-solid fa-minus"></i> 5 GB
+                </button>
+
+                <div class="storage-display">
+                  <span class="storage-value">{{ selectedStorage }}</span>
+                  <span class="storage-unit">GB SSD</span>
+                </div>
+
+                <button
+                  @click="incrementStorage"
+                  :disabled="selectedStorage >= maxStorage"
+                  class="stepper-btn"
+                >
+                  <i class="fa-solid fa-plus"></i> 5 GB
+                </button>
+              </div>
+
+              <div class="storage-slider-wrapper">
+                <input
+                  type="range"
+                  :min="minStorage"
+                  :max="maxStorage"
+                  step="5"
+                  v-model.number="selectedStorage"
+                  class="storage-slider"
+                />
+                <div class="slider-labels">
+                  <span>{{ minStorage }} GB (เริ่มต้น)</span>
+                  <span>25 GB</span>
+                  <span>{{ maxStorage }} GB (สูงสุด)</span>
+                </div>
+              </div>
+
+              <div class="storage-recommendation-note">
+                <i class="fa-solid fa-circle-info"></i>
+                <span v-if="selectedStorage <= 15"
+                  >เหมาะสำหรับปาร์ตี้ทั่วไป แคมเปญสั้น
+                  และการใช้รูปภาพขนาดมาตรฐาน</span
+                >
+                <span v-else-if="selectedStorage <= 25"
+                  >แนะนำสำหรับการทำแคมเปญระยะยาวที่มีไฟล์รูป แผนที่
+                  และเพลงประกอบจำนวนมาก</span
+                >
+                <span v-else
+                  >จุใจระดับตำนาน รองรับไฟล์ฉาก 4K มิวสิกเพลย์ลิสต์ขนาดใหญ่
+                  และโมดูลเสริมเพียบ</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Foundry VTT License Option -->
+        <div v-show="currentStep === 4" class="step-container">
+          <div class="form-section">
+            <h3>5. สิทธิ์การใช้งานลิขสิทธิ์ (Foundry VTT License)</h3>
+            <p class="section-desc">
+              คุณมี License Key ของตนเองเพื่อใช้ FoundryVTT แล้วหรือไม่?
+            </p>
+
+            <div class="grid-options">
+              <div
+                class="option-card"
+                :class="{ active: licenseOption === 'own' }"
+                @click="licenseOption = 'own'"
+              >
+                <div class="card-radio">
+                  <span class="radio-dot"></span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">ใช้คีย์ของตัวเอง</div>
+                  <p class="card-desc">
+                    มี License Key ที่ซื้อมาเองแล้ว สามารถนำไปกรอกใน Server
+                    ได้ทันที
+                  </p>
+                  <p class="card-price">ไม่มีค่าใช้จ่ายเพิ่มเติม (+ ฿0)</p>
+                </div>
+              </div>
+
+              <div
+                class="option-card"
+                :class="{ active: licenseOption === 'borrow' }"
+                @click="licenseOption = 'borrow'"
+              >
+                <div class="card-radio">
+                  <span class="radio-dot"></span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">
+                    ขอยืมสิทธิ์การใช้งานจากทางเรา
+                    <span class="badge-accent">มีระบบช่วยเหลือ</span>
+                  </div>
+                  <p class="card-desc">
+                    ยังไม่มีคีย์ แต่อยากเริ่มเล่นทันที ขอยืมคีย์ของ D&D For Us
+                  </p>
+                  <p class="card-price">+ ฿{{ borrowLicensePrice }} / เดือน</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Premium Add-ons & Summary -->
+        <div v-show="currentStep === 5" class="step-container">
+          <!-- Premium Add-ons -->
+          <div class="form-section">
+            <h3>6. ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
+            <p class="section-desc">
+              เพิ่มขีดความสามารถพิเศษในการเล่นด้วยโมดูลเสริมระดับพรีเมียมที่มีประสิทธิภาพสูงสุด
+            </p>
+
+            <div class="grid-options">
+              <div
+                class="option-card"
+                :class="{ active: plutoniumAddon }"
+                @click="plutoniumAddon = !plutoniumAddon"
+              >
+                <div class="card-checkbox">
+                  <span class="checkbox-box" v-if="plutoniumAddon">✔</span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">
+                    Premium Module: Heromancer
+                    <span class="badge-gold">ยอดฮิต</span>
+                  </div>
+                  <p class="card-desc">
+                    ปลดล็อกขีดความสามารถในการแปลงข้อมูลตัวละคร คาถา
+                    และกฎเสริมจากหนังสือจริง (Physical Books) ของคุณเข้าสู่ระบบ
+                    Foundry VTT เพื่อสร้างตัวละครได้ทันทีอย่างรวดเร็วและเป็นระบบ
+                  </p>
+                  <p class="card-price">+ ฿{{ plutoniumPrice }} / เดือน</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Price Calculation Panel -->
+          <div class="summary-panel" ref="summaryPanel">
+            <h4 class="summary-title">สรุปราคาสเปคที่คุณเลือก</h4>
+
+            <div class="summary-rows">
+              <div class="summary-row">
+                <span>เซิร์ฟเวอร์เริ่มต้น</span>
+                <span>฿{{ basePrice }}</span>
+              </div>
+              <div class="summary-row" v-if="currentMemoryExtra > 0">
+                <span>เพิ่มขนาด RAM เป็น {{ selectedMemory }} GB</span>
+                <span>+ ฿{{ currentMemoryExtra }}</span>
+              </div>
+              <div class="summary-row" v-if="currentStorageExtra > 0">
+                <span
+                  >พื้นที่เพิ่มเติม (+{{
+                    selectedStorage - minStorage
+                  }}
+                  GB)</span
+                >
+                <span>+ ฿{{ currentStorageExtra }}</span>
+              </div>
+              <div class="summary-row" v-if="licenseOption === 'borrow'">
+                <span>ค่าธรรมเนียมยืมคีย์ FoundryVTT</span>
+                <span>+ ฿{{ borrowLicensePrice }}</span>
+              </div>
+              <div class="summary-row" v-if="plutoniumAddon">
+                <span>ส่วนเสริมพรีเมียม Plutonium: Heromancer</span>
+                <span>+ ฿{{ plutoniumPrice }}</span>
+              </div>
+            </div>
+
+            <hr class="summary-divider" />
+
+            <div class="total-row">
+              <span>รวมยอดที่ต้องชำระรายเดือน</span>
+              <span class="total-price"
+                >฿{{ totalPrice }} <span class="per-month">/ เดือน</span></span
+              >
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="action-section">
+            <button
+              @click="submitOrder"
+              :disabled="!isNameValid"
+              class="submit-btn"
+              :class="{ 'btn-disabled': !isNameValid }"
+            >
+              สั่งซื้อเซิร์ฟเวอร์สเปคนี้
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+            <p v-if="!isNameValid" class="button-hint">
+              * กรุณาตั้งชื่อเซิร์ฟเวอร์ที่ถูกต้องก่อนดำเนินการต่อ
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation Buttons (Wizard style) -->
+      <div class="wizard-bottom-nav" v-if="currentStep < 5">
+        <button
+          @click="prevStep"
+          :disabled="isPrevDisabled"
+          class="wizard-nav-btn prev-btn"
+        >
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <button
+          @click="nextStep"
+          :disabled="isNextDisabled"
+          class="wizard-nav-btn next-btn"
+        >
+          ถัดไป <i class="fa-solid fa-arrow-right"></i>
+        </button>
       </div>
     </div>
 
@@ -406,6 +489,16 @@ import { useRoute, useRouter } from "vue-router";
 
 import BackButton from "../components/BackButton.vue";
 
+// Wizard Steps Configuration
+const currentStep = ref(1);
+const stepTitles = ref([
+  "ชื่อเซิร์ฟเวอร์",
+  "เวอร์ชันระบบ",
+  "สเปคเครื่อง (RAM & SSD)",
+  "ลิขสิทธิ์ระบบ",
+  "ตัวเลือกเสริม & สรุปรายการ",
+]);
+
 // Floating sticker visibility state
 const summaryPanel = ref(null);
 const showSticker = ref(true);
@@ -430,9 +523,13 @@ onUnmounted(() => {
 });
 
 const scrollToSummary = () => {
-  if (summaryPanel.value) {
-    summaryPanel.value.scrollIntoView({ behavior: "smooth" });
-  }
+  currentStep.value = 5;
+  // Wait for the DOM to update step container visibility so that summaryPanel exists in the viewport layout
+  setTimeout(() => {
+    if (summaryPanel.value) {
+      summaryPanel.value.scrollIntoView({ behavior: "smooth" });
+    }
+  }, 50);
 };
 
 // Base price configuration
@@ -480,6 +577,41 @@ const isNameValid = computed(() => {
   const normalized = serverNameNormalized.value;
   return normalized.length >= 3 && normalized.length <= 30;
 });
+
+// Wizard Steps Navigation Validation
+const isPrevDisabled = computed(() => {
+  return currentStep.value <= 1;
+});
+
+const isNextDisabled = computed(() => {
+  if (currentStep.value >= 5) return true;
+  if (currentStep.value === 1 && !isNameValid.value) return true;
+  return false;
+});
+
+const nextStep = () => {
+  if (isNextDisabled.value) return;
+  if (currentStep.value < 5) {
+    currentStep.value++;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
+
+const prevStep = () => {
+  if (isPrevDisabled.value) return;
+  if (currentStep.value > 1) {
+    currentStep.value--;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
+
+const goToStep = (step) => {
+  if (step > 1 && !isNameValid.value) {
+    currentStep.value = 1;
+    return;
+  }
+  currentStep.value = step;
+};
 
 // Sync isOrdered and route path
 watch(
@@ -641,12 +773,13 @@ const copyOrderText = () => {
 const resetForm = () => {
   serverName.value = "";
   selectedVersion.value = 14;
-  selectedMemory.value = 4;
-  selectedStorage.value = 20;
+  selectedMemory.value = 2;
+  selectedStorage.value = 5;
   licenseOption.value = "own";
   plutoniumAddon.value = false;
   isOrdered.value = false;
   isCopied.value = false;
+  currentStep.value = 1;
 };
 </script>
 
@@ -654,7 +787,7 @@ const resetForm = () => {
 .creator-container {
   max-width: 650px;
   margin: 1.5em auto;
-  padding: 0 1em;
+  padding: 0 1em 3em;
   font-family: "Noto Sans Thai", sans-serif;
   color: #f5f5f5;
 }
@@ -694,6 +827,217 @@ const resetForm = () => {
   height: 1px;
   background: linear-gradient(to right, transparent, #555555, transparent);
   margin: 1.5em 0;
+}
+
+/* Step Navigation Styles */
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid #383838;
+}
+
+.step-title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.step-badge {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #ffde59;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.2rem;
+}
+
+.step-title-text {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0;
+}
+
+.nav-btn {
+  background-color: #db292f;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #f1353b;
+  transform: scale(1.05);
+}
+
+.nav-btn:disabled {
+  background-color: #353535;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+/* Step Progress Bar Styles */
+.step-progress-bar {
+  position: relative;
+  height: 4px;
+  background-color: #3a3a3a;
+  border-radius: 2px;
+  margin: 1.5rem 1rem 2.5rem 1rem;
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #db292f;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progress-dots {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.progress-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #2a2a2a;
+  border: 2px solid #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+  z-index: 2;
+}
+
+.progress-dot.active {
+  border-color: #db292f;
+  background-color: #db292f;
+}
+
+.progress-dot.current {
+  border-color: #ffde59;
+  background-color: #2a2a2a;
+  box-shadow: 0 0 10px rgba(255, 222, 89, 0.5);
+}
+
+.dot-number {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #cccccc;
+}
+
+.progress-dot.active .dot-number {
+  color: #ffffff;
+}
+
+.progress-dot.current .dot-number {
+  color: #ffde59;
+}
+
+.progress-dot:not(.active):hover {
+  border-color: #888888;
+}
+
+/* Wizard Bottom Nav Styles */
+.wizard-bottom-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #383838;
+}
+
+.wizard-nav-btn {
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 0.7rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prev-btn {
+  background-color: #353535;
+  color: #ffffff;
+  border: 1px solid #4a4a4a;
+}
+
+.prev-btn:hover:not(:disabled) {
+  background-color: #454545;
+  border-color: #666666;
+}
+
+.prev-btn:disabled {
+  background-color: #222222;
+  color: #555555;
+  border-color: #333333;
+  cursor: not-allowed;
+}
+
+.next-btn {
+  background-color: #db292f;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(219, 41, 47, 0.2);
+}
+
+.next-btn:hover:not(:disabled) {
+  background-color: #f1353b;
+  box-shadow: 0 4px 15px rgba(219, 41, 47, 0.4);
+  transform: translateY(-1px);
+}
+
+.next-btn:disabled {
+  background-color: #4a4a4a;
+  color: #888888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Step Containers */
+.step-container {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-section {
@@ -976,7 +1320,7 @@ const resetForm = () => {
 }
 
 .card-checkbox {
-  border-radius: 4px; /* square-ish checkbox visual */
+  border-radius: 4px;
 }
 
 .option-card.active .card-radio,
@@ -1163,15 +1507,6 @@ const resetForm = () => {
   margin-bottom: 1.5em;
 }
 
-.success-icon-wrapper {
-  margin-bottom: 0.5em;
-}
-
-.success-icon {
-  font-size: 3em;
-  animation: celebrate 1.5s ease infinite alternate;
-}
-
 .success-header h2 {
   color: #2ecc71;
   font-size: 1.6em;
@@ -1337,6 +1672,40 @@ const resetForm = () => {
   .stepper-btn {
     width: 100%;
   }
+
+  /* Wizard Mobile styles */
+  .step-navigation {
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .step-title-text {
+    font-size: 1rem;
+  }
+  .step-badge {
+    font-size: 0.7rem;
+  }
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .step-progress-bar {
+    margin: 1.5rem 1rem 2rem 1rem;
+  }
+  .progress-dot {
+    width: 20px;
+    height: 20px;
+  }
+  .dot-number {
+    font-size: 0.65rem;
+  }
+  .wizard-bottom-nav {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+  .wizard-nav-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
 }
 
 /* Floating Cost Sticker Styles */
@@ -1413,7 +1782,7 @@ const resetForm = () => {
 
 .sticker-btn:hover {
   background-color: #f1353b;
-  box-shadow: 0 4px 15px rgba(219, 41, 47, 0.5);
+  box-shadow: 0 4px 15px rgba(219, 41, 47, 0.4);
   transform: translateY(-2px);
 }
 
