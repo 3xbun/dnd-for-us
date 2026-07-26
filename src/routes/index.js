@@ -8,8 +8,9 @@ import ServerCreator from "../views/ServerCreator.vue";
 const routes = [
   { path: "/", component: HomeView },
   { path: "/sale", component: SaleView },
-  { path: "/:memberID", component: MemberView },
   { path: "/new-server", component: ServerCreator },
+  { path: "/new-server/summary", component: ServerCreator },
+  { path: "/:memberID", component: MemberView },
 ];
 
 const router = createRouter({

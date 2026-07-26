@@ -401,7 +401,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import BackButton from "../components/BackButton.vue";
 
@@ -452,6 +453,9 @@ const selectedStorage = ref(5);
 const licenseOption = ref("own"); // 'own' or 'borrow'
 const plutoniumAddon = ref(false); // Heromancer integration flag
 
+const route = useRoute();
+const router = useRouter();
+
 // Order flow State
 const isOrdered = ref(false);
 const isCopied = ref(false);
@@ -475,6 +479,31 @@ const normalizeServerName = () => {
 const isNameValid = computed(() => {
   const normalized = serverNameNormalized.value;
   return normalized.length >= 3 && normalized.length <= 30;
+});
+
+// Sync isOrdered and route path
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === "/new-server/summary") {
+      if (!isNameValid.value) {
+        router.replace("/new-server");
+      } else {
+        isOrdered.value = true;
+      }
+    } else if (newPath === "/new-server") {
+      isOrdered.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+watch(isOrdered, (newVal) => {
+  if (newVal && route.path !== "/new-server/summary") {
+    router.push("/new-server/summary");
+  } else if (!newVal && route.path === "/new-server/summary") {
+    router.push("/new-server");
+  }
 });
 
 // Options Lists
