@@ -119,6 +119,14 @@
                 </div>
               </td>
             </tr>
+            <tr v-if="isStudent">
+              <td>สถานะผู้ใช้งาน:</td>
+              <td>
+                <span class="badge-gold">
+                  <i class="fa-solid fa-graduation-cap"></i> ได้รับส่วนลดนักศึกษา 20%
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -163,6 +171,7 @@
       :heromancer="informations.fields.Heromancer"
       :hasLicense="informations.fields.hasLicense"
       :monthActive="informations.fields.MonthActive"
+      :isStudent="isStudent"
       @close="showPaymentModal = false"
       v-if="loaded"
     />
@@ -216,6 +225,10 @@ watch(showPaymentModal, (newVal) => {
   }
 });
 
+const isStudent = computed(() => {
+  return !!(informations.value?.fields?.isStudent || informations.value?.fields?.IsStudent);
+});
+
 const renewPrice = computed(() => {
   if (!informations.value?.fields) return 0;
 
@@ -250,6 +263,11 @@ const renewPrice = computed(() => {
   if (monthActive === 5) {
     discountPercent = 10;
   } else if (monthActive === 11) {
+    discountPercent = 20;
+  }
+
+  // Student Discount 20%
+  if (isStudent.value) {
     discountPercent = 20;
   }
 
