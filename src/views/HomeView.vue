@@ -39,12 +39,16 @@
         </button>
       </router-link>
     </div>
+
+    <BadgesFooter />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+
+import BadgesFooter from "../components/BadgesFooter.vue";
 
 const memberID = ref("");
 const router = useRouter();
