@@ -93,9 +93,16 @@
               </td>
             </tr>
             <tr>
-              <td>เป็นสมาชิกตั้งแต่:</td>
+              <td>เป็นสมาชิกมาแล้ว:</td>
               <td>
-                {{ dayjs(informations.fields.FirstMonth).format("DD/MM/YYYY") }}
+                <div class="billing-date-wrapper">
+                  <span class="billing-date-text">
+                    {{
+                      dayjs().diff(dayjs(informations.fields.FirstMonth), "day")
+                    }}
+                    วัน
+                  </span>
+                </div>
               </td>
             </tr>
             <tr
@@ -113,7 +120,19 @@
                       )
                     }}
                   </span>
-                  <span class="billing-countdown-badge">
+                  <span
+                    class="billing-countdown-badge"
+                    v-if="dayjs(informations.fields.NextCollect).isTomorrow()"
+                  >
+                    (วันพรุ่งนี้)
+                  </span>
+                  <span
+                    class="billing-countdown-badge"
+                    v-else-if="dayjs(informations.fields.NextCollect).isToday()"
+                  >
+                    (วันนี้)
+                  </span>
+                  <span class="billing-countdown-badge" v-else>
                     ({{ dayjs(informations.fields.NextCollect).fromNow() }})
                   </span>
                 </div>
@@ -123,7 +142,8 @@
               <td>สถานะผู้ใช้งาน:</td>
               <td>
                 <span class="badge-gold">
-                  <i class="fa-solid fa-graduation-cap"></i> ได้รับส่วนลดนักศึกษา 20%
+                  <i class="fa-solid fa-graduation-cap"></i>
+                  ได้รับส่วนลดนักศึกษา 20%
                 </span>
               </td>
             </tr>
@@ -182,6 +202,8 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import isToday from "dayjs/plugin/isToday";
+import isTomorrow from "dayjs/plugin/isTomorrow";
 import "dayjs/locale/th";
 import { onMounted, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -190,6 +212,8 @@ import BackButton from "../components/BackButton.vue";
 import QRCodeModal from "../components/QRCode.vue";
 
 dayjs.extend(relativeTime);
+dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
 dayjs.locale("th");
 
 const stamps = [0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 20];
@@ -226,7 +250,10 @@ watch(showPaymentModal, (newVal) => {
 });
 
 const isStudent = computed(() => {
-  return !!(informations.value?.fields?.isStudent || informations.value?.fields?.IsStudent);
+  return !!(
+    informations.value?.fields?.isStudent ||
+    informations.value?.fields?.IsStudent
+  );
 });
 
 const renewPrice = computed(() => {
@@ -509,6 +536,19 @@ td:first-child {
 
 .pay-now-btn:active {
   transform: translateY(0);
+}
+
+.billing-date-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.billing-countdown-badge {
+  color: #ffde59;
+  font-size: 0.9em;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 600px) {
