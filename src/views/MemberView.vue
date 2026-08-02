@@ -125,7 +125,7 @@
                 informations.fields.NextCollect && informations.fields.IsActive
               "
             >
-              <td>รอบชำระเงินถัดไป:</td>
+              <td>รอบชำระถัดไป:</td>
               <td>
                 <div class="billing-date-wrapper">
                   <span class="billing-date-text">
