@@ -4,7 +4,7 @@
       <button class="close-btn" @click="closeModal">&times;</button>
 
       <div class="payment-header">
-        <h3><i class="fa-solid fa-qrcode"></i> สแกนเพื่อชำระเงิน</h3>
+        <h3><i class="fa-solid fa-duotone fa-qrcode"></i> สแกนเพื่อชำระเงิน</h3>
         <p class="subtitle">
           ต่ออายุเซิร์ฟเวอร์ <strong>{{ serverName }}</strong>
         </p>
@@ -17,13 +17,15 @@
         </div>
 
         <div v-if="isStudent" class="student-discount-banner">
-          <i class="fa-solid fa-graduation-cap"></i> ได้รับส่วนลดนักศึกษา 20% แล้ว
+          <i class="fa-solid fa-duotone fa-graduation-cap"></i>
+          ได้รับส่วนลดนักศึกษา 20% แล้ว
         </div>
 
         <!-- PrompPay QR Frame with generated QR -->
         <div class="qr-container">
           <div v-if="loading" class="qr-loading">
-            <i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้าง QR Code...
+            <i class="fa-solid fa-duotone fa-spinner fa-spin"></i> กำลังสร้าง QR
+            Code...
           </div>
           <img
             v-else
@@ -35,7 +37,7 @@
 
         <div class="payment-instructions">
           <p>
-            <i class="fa-solid fa-circle-info"></i>
+            <i class="fa-solid fa-duotone fa-circle-info"></i>
             กรุณาสแกนคิวอาร์โค้ดนี้เพื่อชำระเงินผ่านแอปพลิเคชันธนาคาร
           </p>
           <p class="highlight-info">
@@ -46,7 +48,7 @@
 
       <div class="payment-footer">
         <button class="btn-success" @click="closeModal">
-          <i class="fa-solid fa-check"></i> เสร็จสิ้น
+          <i class="fa-solid fa-duotone fa-check"></i> เสร็จสิ้น
         </button>
       </div>
     </div>

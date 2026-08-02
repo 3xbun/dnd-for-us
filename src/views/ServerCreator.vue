@@ -21,7 +21,7 @@
           class="nav-btn"
           title="ย้อนกลับ"
         >
-          <i class="fa-solid fa-arrow-left"></i>
+          <i class="fa-solid fa-duotone fa-arrow-left"></i>
         </button>
         <div class="step-title-container">
           <span class="step-badge">ขั้นตอนที่ {{ currentStep }}/5</span>
@@ -33,7 +33,7 @@
           class="nav-btn"
           title="ถัดไป"
         >
-          <i class="fa-solid fa-arrow-right"></i>
+          <i class="fa-solid fa-duotone fa-arrow-right"></i>
         </button>
       </div>
 
@@ -191,7 +191,7 @@
                   :disabled="selectedStorage <= minStorage"
                   class="stepper-btn"
                 >
-                  <i class="fa-solid fa-minus"></i> 5 GB
+                  <i class="fa-solid fa-duotone fa-minus"></i> 5 GB
                 </button>
 
                 <div class="storage-display">
@@ -204,7 +204,7 @@
                   :disabled="selectedStorage >= maxStorage"
                   class="stepper-btn"
                 >
-                  <i class="fa-solid fa-plus"></i> 5 GB
+                  <i class="fa-solid fa-duotone fa-plus"></i> 5 GB
                 </button>
               </div>
 
@@ -225,7 +225,7 @@
               </div>
 
               <div class="storage-recommendation-note">
-                <i class="fa-solid fa-circle-info"></i>
+                <i class="fa-solid fa-duotone fa-circle-info"></i>
                 <span v-if="selectedStorage <= 15"
                   >เหมาะสำหรับปาร์ตี้ทั่วไป แคมเปญสั้น
                   และการใช้รูปภาพขนาดมาตรฐาน</span
@@ -378,7 +378,7 @@
               :class="{ 'btn-disabled': !isNameValid }"
             >
               สั่งซื้อเซิร์ฟเวอร์สเปคนี้
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <i class="fa-solid fa-duotone fa-wand-magic-sparkles"></i>
             </button>
             <p v-if="!isNameValid" class="button-hint">
               * กรุณาตั้งชื่อเซิร์ฟเวอร์ที่ถูกต้องก่อนดำเนินการต่อ
@@ -394,14 +394,14 @@
           :disabled="isPrevDisabled"
           class="wizard-nav-btn prev-btn"
         >
-          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+          <i class="fa-solid fa-duotone fa-arrow-left"></i> ย้อนกลับ
         </button>
         <button
           @click="nextStep"
           :disabled="isNextDisabled"
           class="wizard-nav-btn next-btn"
         >
-          ถัดไป <i class="fa-solid fa-arrow-right"></i>
+          ถัดไป <i class="fa-solid fa-duotone fa-arrow-right"></i>
         </button>
       </div>
     </div>
@@ -436,10 +436,10 @@
         <!-- Copy Action Button -->
         <button @click="copyOrderText" class="copy-btn">
           <span v-if="!isCopied"
-            >คัดลอกสเปคเซิร์ฟเวอร์ <i class="fa-solid fa-copy"></i
+            >คัดลอกสเปคเซิร์ฟเวอร์ <i class="fa-solid fa-duotone fa-copy"></i
           ></span>
           <span v-else
-            >คัดลอกสำเร็จแล้ว! <i class="fa-solid fa-check"></i
+            >คัดลอกสำเร็จแล้ว! <i class="fa-solid fa-duotone fa-check"></i
           ></span>
         </button>
 
@@ -459,7 +459,8 @@
 
       <div class="success-footer">
         <button @click="resetForm" class="btn-secondary">
-          <i class="fa-solid fa-rotate-left"></i> สร้างเซิร์ฟเวอร์ใหม่อีกเครื่อง
+          <i class="fa-solid fa-duotone fa-rotate-left"></i>
+          สร้างเซิร์ฟเวอร์ใหม่อีกเครื่อง
         </button>
       </div>
     </div>
@@ -476,7 +477,7 @@
         </div>
         <button @click="scrollToSummary" class="sticker-btn">
           <span>ดูสรุป & สั่งซื้อ</span>
-          <i class="fa-solid fa-chevron-down"></i>
+          <i class="fa-solid fa-duotone fa-chevron-down"></i>
         </button>
       </div>
     </Transition>

@@ -2,7 +2,7 @@
   <div class="back-link">
     <router-link to="/">
       <button class="btn-secondary">
-        <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก
+        <i class="fa-solid fa-duotone fa-arrow-left"></i> กลับหน้าหลัก
       </button>
     </router-link>
   </div>

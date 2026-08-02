@@ -35,7 +35,7 @@
       <router-link to="/server">
         <button class="btn-primary">
           ปรับแต่ง & สั่งซื้อเซิร์ฟเวอร์
-          <i class="fa-solid fa-chevron-right"></i>
+          <i class="fa-solid fa-duotone fa-chevron-right"></i>
         </button>
       </router-link>
     </div>
