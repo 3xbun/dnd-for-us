@@ -179,7 +179,7 @@
           v-for="(dis, index) in stamps"
           :key="index"
           class="stamp"
-          :class="{ pump: index < informations.fields.MonthActive }"
+          :class="{ pump: index < informations.fields.MonthActive % 12 }"
         >
           <img src="/imgs/stamp.png" alt="stamp" />
           <p class="month">
