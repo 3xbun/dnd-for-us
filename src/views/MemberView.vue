@@ -15,7 +15,7 @@
           <tbody>
             <tr>
               <td>เซิร์ฟเวอร์:</td>
-              <td>
+              <td class="server-link-container">
                 <a
                   :href="
                     'https://' + informations.fields.ServerID + '.dnd-for.us'
@@ -24,14 +24,21 @@
                   class="server-link"
                 >
                   {{ informations.fields.ServerID }}.dnd-for.us
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  <i
+                    class="fa-solid fa-duotone fa-arrow-up-right-from-square"
+                  ></i>
                 </a>
-              </td>
-            </tr>
-            <tr>
-              <td>เจ้าของ:</td>
-              <td>
-                {{ informations.fields.Owner?.fields?.FacebookName || "-" }}
+                <a
+                  v-if="informations.fields.DockerID"
+                  :href="
+                    'https://dnd-for.us/server/' + informations.fields.DockerID
+                  "
+                  target="_blank"
+                  class="manage-link"
+                >
+                  <i class="fa-solid fa-duotone fa-terminal"></i> Console /
+                  Files
+                </a>
               </td>
             </tr>
             <tr>
@@ -39,21 +46,21 @@
               <td>
                 <div class="specs-details-box">
                   <div class="spec-detail-line">
-                    <i class="fa-solid fa-microchip icon-red"></i>
+                    <i class="fa-solid fa-duotone fa-microchip icon-red"></i>
                     <span
                       ><strong>หน่วยความจำ:</strong>
                       {{ informations.fields.Ram || "2" }} GB RAM</span
                     >
                   </div>
                   <div class="spec-detail-line">
-                    <i class="fa-solid fa-hard-drive icon-blue"></i>
+                    <i class="fa-solid fa-duotone fa-hard-drive icon-blue"></i>
                     <span
                       ><strong>พื้นที่:</strong>
                       {{ informations.fields.Storage || "5" }} GB</span
                     >
                   </div>
                   <div class="spec-detail-line">
-                    <i class="fa-solid fa-key icon-green"></i>
+                    <i class="fa-solid fa-duotone fa-key icon-green"></i>
                     <span>
                       <strong>License:</strong>
                       {{
@@ -64,7 +71,9 @@
                     </span>
                   </div>
                   <div class="spec-detail-line">
-                    <i class="fa-solid fa-sparkles icon-purple"></i>
+                    <i
+                      class="fa-solid fa-duotone fa-duotone fa-sparkles icon-purple"
+                    ></i>
                     <span>
                       <strong>ส่วนเสริม Heromancer: </strong>
                       <span
@@ -90,6 +99,12 @@
                 <span v-else class="status-badge status-inactive">
                   ปิดระบบ (Inactive)
                 </span>
+              </td>
+            </tr>
+            <tr>
+              <td>เจ้าของ:</td>
+              <td>
+                {{ informations.fields.Owner?.fields?.FacebookName || "-" }}
               </td>
             </tr>
             <tr>
@@ -142,7 +157,7 @@
               <td>สถานะผู้ใช้งาน:</td>
               <td>
                 <span class="badge-gold">
-                  <i class="fa-solid fa-graduation-cap"></i>
+                  <i class="fa-solid fa-duotone fa-graduation-cap"></i>
                   ได้รับส่วนลดนักศึกษา 20%
                 </span>
               </td>
@@ -154,7 +169,7 @@
       <!-- Payment / Renewal Action Button -->
       <div class="payment-action-box" v-if="informations.fields.IsActive">
         <button class="pay-now-btn" @click="showPaymentModal = true">
-          <i class="fa-solid fa-credit-card"></i> ชำระค่าบริการ /
+          <i class="fa-solid fa-duotone fa-credit-card"></i> ชำระค่าบริการ /
           ต่ออายุเซิร์ฟเวอร์ (฿{{ renewPrice }})
         </button>
       </div>
@@ -536,6 +551,34 @@ td:first-child {
 
 .pay-now-btn:active {
   transform: translateY(0);
+}
+
+.server-link-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.manage-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  background-color: #1a1a1a;
+  color: #3498db;
+  border: 1px solid #3498db;
+  border-radius: 0.4em;
+  padding: 0.25em 0.6em;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.manage-link:hover {
+  background-color: #3498db;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
 }
 
 .billing-date-wrapper {
