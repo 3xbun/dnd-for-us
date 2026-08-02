@@ -154,7 +154,7 @@
               </td>
             </tr>
             <tr v-if="isStudent">
-              <td>สถานะผู้ใช้งาน:</td>
+              <td>ส่วนลดนักศึกษา:</td>
               <td>
                 <span class="badge-gold">
                   <i class="fa-solid fa-duotone fa-graduation-cap"></i>
@@ -344,7 +344,7 @@ table {
 tr {
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 0.6em;
 }
 
@@ -388,6 +388,12 @@ td {
 .spec-detail-line i {
   width: 1.2em;
   text-align: center;
+}
+
+.spec-detail-line span {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
 }
 
 .icon-gold {
