@@ -11,12 +11,7 @@
           v-model="memberID"
           @keyup.enter="goToMember"
         />
-        <router-link
-          :to="memberID.trim().toLowerCase()"
-          :class="{ disabled: !memberID.trim() }"
-        >
-          <button :disabled="!memberID.trim()">ค้นหา</button>
-        </router-link>
+        <button :disabled="!memberID.trim()" @click="goToMember">ค้นหา</button>
       </div>
     </div>
 
