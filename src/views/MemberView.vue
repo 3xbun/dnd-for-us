@@ -218,7 +218,14 @@
           v-for="(dis, index) in stamps"
           :key="index"
           class="stamp"
-          :class="{ pump: index < informations.fields.MonthActive % 12 }"
+          :class="{
+            pump:
+              index <
+              (informations.fields.MonthActive % 12 === 0 &&
+              informations.fields.MonthActive > 0
+                ? 12
+                : informations.fields.MonthActive % 12),
+          }"
         >
           <img src="/imgs/stamp.png" alt="stamp" />
           <p class="month">
@@ -345,7 +352,7 @@ const applyDiscountCode = async () => {
           headers: {
             "xc-token": import.meta.env.VITE_NDB_API,
           },
-        }
+        },
       );
 
       const promoRecords = promoCheckRes.data.list || [];
@@ -354,7 +361,7 @@ const applyDiscountCode = async () => {
         return usedTitles.some(
           (title) =>
             typeof title === "string" &&
-            title.toUpperCase() === code.toUpperCase()
+            title.toUpperCase() === code.toUpperCase(),
         );
       });
 
