@@ -21,6 +21,11 @@
           ได้รับส่วนลดนักศึกษา 20% แล้ว
         </div>
 
+        <div v-if="discountCodeValue > 0" class="discount-code-banner">
+          <i class="fa-solid fa-duotone fa-ticket"></i>
+          ได้รับส่วนลดจากโค้ดส่วนลด {{ discountCodeValue }}% แล้ว
+        </div>
+
         <!-- PrompPay QR Frame with generated QR -->
         <div class="qr-container">
           <div v-if="loading" class="qr-loading">
@@ -98,6 +103,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  discountCodeValue: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const emit = defineEmits(["close"]);
@@ -145,6 +154,11 @@ const calculatedAmount = computed(() => {
   // Apply 20% discount if student
   if (props.isStudent) {
     discountPercent = 20;
+  }
+
+  // Apply discount code if present
+  if (props.discountCodeValue) {
+    discountPercent += props.discountCodeValue;
   }
 
   const discountAmount = Math.round(
@@ -277,6 +291,21 @@ watch(
 
 .student-discount-banner {
   background-color: #ffde59;
+  color: #111111;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  margin-bottom: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+.discount-code-banner {
+  background-color: #2ecc71;
   color: #111111;
   font-size: 0.85em;
   font-weight: bold;

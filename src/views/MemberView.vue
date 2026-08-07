@@ -166,6 +166,45 @@
         </table>
       </div>
 
+      <!-- Discount Code Block -->
+      <div class="discount-box" v-if="informations.fields.IsActive">
+        <div class="discount-title">
+          <i class="fa-solid fa-duotone fa-ticket text-gold"></i>
+          <span>โค้ดส่วนลด</span>
+        </div>
+        <div class="discount-input-group">
+          <input
+            type="text"
+            v-model="discountCodeInput"
+            placeholder="กรอกโค้ดส่วนลด"
+            class="discount-input"
+            :disabled="appliedDiscountCode !== null || checkingDiscount"
+            @keyup.enter="applyDiscountCode"
+          />
+          <button
+            v-if="appliedDiscountCode === null"
+            class="discount-apply-btn"
+            :disabled="checkingDiscount || !discountCodeInput.trim()"
+            @click="applyDiscountCode"
+          >
+            {{ checkingDiscount ? "กำลังตรวจสอบ..." : "ใช้โค้ด" }}
+          </button>
+          <button
+            v-else
+            class="discount-apply-btn btn-danger"
+            @click="clearDiscountCode"
+          >
+            ยกเลิก
+          </button>
+        </div>
+        <div v-if="discountSuccess" class="discount-message discount-success">
+          <i class="fa-solid fa-circle-check"></i> {{ discountSuccess }}
+        </div>
+        <div v-if="discountError" class="discount-message discount-error">
+          <i class="fa-solid fa-circle-xmark"></i> {{ discountError }}
+        </div>
+      </div>
+
       <!-- Payment / Renewal Action Button -->
       <div class="payment-action-box" v-if="informations.fields.IsActive">
         <button class="pay-now-btn" @click="showPaymentModal = true">
@@ -207,6 +246,7 @@
       :hasLicense="informations.fields.hasLicense"
       :monthActive="informations.fields.MonthActive"
       :isStudent="isStudent"
+      :discountCodeValue="appliedDiscount"
       @close="showPaymentModal = false"
       v-if="loaded"
     />
@@ -271,6 +311,104 @@ const isStudent = computed(() => {
   );
 });
 
+// Discount code state and functions
+const discountCodeInput = ref("");
+const appliedDiscountCode = ref(null);
+const discountError = ref("");
+const discountSuccess = ref("");
+const checkingDiscount = ref(false);
+
+const appliedDiscount = computed(() => {
+  return appliedDiscountCode.value
+    ? appliedDiscountCode.value.Discount || 0
+    : 0;
+});
+
+const applyDiscountCode = async () => {
+  const code = discountCodeInput.value.trim();
+  if (!code) return;
+
+  checkingDiscount.value = true;
+  discountError.value = "";
+  discountSuccess.value = "";
+
+  try {
+    // 1. Check if the current user has already used this specific promotion code
+    const ownerName = informations.value?.fields?.Owner?.fields?.FacebookName;
+    if (ownerName) {
+      const promoCheckRes = await axios.get(
+        `https://ndb.3xbun.com/api/v2/tables/m5adt0d0qn8i3at/records`,
+        {
+          params: {
+            where: `(FacebookName,eq,${ownerName})`,
+          },
+          headers: {
+            "xc-token": import.meta.env.VITE_NDB_API,
+          },
+        }
+      );
+
+      const promoRecords = promoCheckRes.data.list || [];
+      const hasUsedThisPromo = promoRecords.some((r) => {
+        const usedTitles = r["Title (from Promo)"] || [];
+        return usedTitles.some(
+          (title) =>
+            typeof title === "string" &&
+            title.toUpperCase() === code.toUpperCase()
+        );
+      });
+
+      if (hasUsedThisPromo) {
+        discountError.value = `คุณเคยใช้โค้ดส่วนลด "${code}" ไปแล้ว`;
+        checkingDiscount.value = false;
+        return;
+      }
+    }
+
+    // 2. Validate discount code
+    const res = await axios.get(
+      `https://ndb.3xbun.com/api/v2/tables/mc1yhvzwancgp2j/records`,
+      {
+        params: {
+          where: `(Title,eq,${code})`,
+        },
+        headers: {
+          "xc-token": import.meta.env.VITE_NDB_API,
+        },
+      },
+    );
+
+    const records = res.data.list || [];
+    const match = records.find(
+      (r) =>
+        r.Title &&
+        r.Title.toUpperCase() === code.toUpperCase() &&
+        r.Discount !== null &&
+        r.Discount !== undefined,
+    );
+
+    if (match) {
+      appliedDiscountCode.value = match;
+      discountSuccess.value = `ใช้โค้ด "${match.Title}" สำเร็จ! ได้รับส่วนลด ${match.Discount}%`;
+      discountError.value = "";
+    } else {
+      discountError.value = "ไม่พบโค้ดส่วนลดนี้ หรือโค้ดไม่ถูกต้อง";
+    }
+  } catch (err) {
+    console.error("Error checking discount code:", err);
+    discountError.value = "เกิดข้อผิดพลาดในการตรวจสอบโค้ดส่วนลด";
+  } finally {
+    checkingDiscount.value = false;
+  }
+};
+
+const clearDiscountCode = () => {
+  appliedDiscountCode.value = null;
+  discountCodeInput.value = "";
+  discountSuccess.value = "";
+  discountError.value = "";
+};
+
 const renewPrice = computed(() => {
   if (!informations.value?.fields) return 0;
 
@@ -311,6 +449,11 @@ const renewPrice = computed(() => {
   // Student Discount 20%
   if (isStudent.value) {
     discountPercent = 20;
+  }
+
+  // Applied Discount Code
+  if (appliedDiscount.value) {
+    discountPercent += appliedDiscount.value;
   }
 
   const discountAmount = Math.round(
@@ -598,6 +741,107 @@ td:first-child {
   color: #ffde59;
   font-size: 0.9em;
   font-weight: bold;
+}
+
+.discount-box {
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 0.6em;
+  padding: 1em;
+  margin: 1.5em 1em 0 1em;
+  text-align: left;
+}
+
+.discount-title {
+  font-size: 0.95em;
+  font-weight: bold;
+  margin-bottom: 0.6em;
+  color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.text-gold {
+  color: #ffde59;
+}
+
+.discount-input-group {
+  display: flex;
+  gap: 0.5em;
+}
+
+.discount-input {
+  flex-grow: 1;
+  background-color: #121212;
+  border: 1px solid #444444;
+  border-radius: 0.4em;
+  padding: 0.6em 0.8em;
+  color: #ffffff;
+  font-size: 0.9em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.discount-input:focus {
+  border-color: #ffde59;
+}
+
+.discount-input:disabled {
+  background-color: #222222;
+  color: #888888;
+  border-color: #333333;
+}
+
+.discount-apply-btn {
+  background-color: #ffde59;
+  color: #111111;
+  border: none;
+  border-radius: 0.4em;
+  padding: 0.6em 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discount-apply-btn:hover:not(:disabled) {
+  background-color: #ffe680;
+  transform: translateY(-1px);
+}
+
+.discount-apply-btn:disabled {
+  background-color: #333333;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+.discount-apply-btn.btn-danger {
+  background-color: #db292f;
+  color: #ffffff;
+}
+
+.discount-apply-btn.btn-danger:hover {
+  background-color: #f1353b;
+}
+
+.discount-message {
+  margin-top: 0.6em;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.discount-success {
+  color: #2ecc71;
+}
+
+.discount-error {
+  color: #e74c3c;
 }
 
 @media screen and (max-width: 600px) {
