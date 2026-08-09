@@ -402,93 +402,157 @@
           </div>
         </div>
 
-        <!-- Template 1: Greeting / Ask specifications -->
+        <!-- Template 1: Introduce self-service ServerCreator -->
         <div class="template-card">
           <div class="template-header">
-            <strong>1. ก่อนตกลงซื้อขาย (ถามข้อมูล)</strong>
+            <strong
+              >1. แนะนำระบบสร้างเซิร์ฟเวอร์ด้วยตนเอง (ServerCreator)</strong
+            >
             <button @click="copyTemplateText($refs.t1)" class="copy-tmpl-btn">
               คัดลอก
             </button>
           </div>
           <pre class="template-text" ref="t1">
-เมื่อลูกค้าทักมา (DM/Line/Inbox) อย่าเพิ่งขายทันที ให้ถามคำถามเหล่านี้ก่อนเพื่อวิเคราะห์แคมเปญ:
-- ปกติเล่นกันกี่คนครับ?
-- ใช้ Module เยอะไหม หรือเน้นใช้ภาพความละเอียดสูง (4K) หรือเปล่าครับ?
-- เคยใช้ Foundry VTT มาก่อนไหมครับ?</pre
+สวัสดีครับ! ขณะนี้ทาง D&D: For Us มีระบบสร้างและเปิดเซิร์ฟเวอร์แบบอัตโนมัติด้วยตนเองเรียบร้อยแล้วครับ 🎉
+
+ลูกค้าสามารถคลิกเข้าไปเลือกสเปค ตั้งชื่อลิงก์ห้อง และชำระเงินเพื่อเปิดใช้งานเซิร์ฟเวอร์ได้ทันทีโดยไม่ต้องรอทีมงานดำเนินการให้ครับ!
+
+🔗 สั่งซื้อและเปิดเซิร์ฟเวอร์ได้ที่: https://dnd-for.us/create
+(หรือกดเลือกเมนู "สร้างเซิร์ฟเวอร์ใหม่" บนหน้าเว็บไซต์)
+
+ขั้นตอนง่ายๆ:
+1. เลือกความจำ (RAM) และพื้นที่เก็บข้อมูล (Storage) ตามความต้องการ
+2. เลือกว่าจะใช้ License Key ของตนเอง หรือเช่าของ D&D: For Us
+3. ระบุชื่อเซิฟเวอร์ เช่น `{{
+              templatePrefill.serverName || "my-campaign"
+            }}` เพื่อนำไปสร้างลิงก์เข้าเล่น
+4. สแกน QR Code ชำระค่าบริการผ่านระบบ PromptPay
+5. ระบบจะติดตั้งและเตรียมเซิร์ฟเวอร์ให้พร้อมเล่นโดยอัตโนมัติทันทีภายใน 1-3 นาทีครับ! 🏹✨
+
+หากติดขัดขั้นตอนใดในระหว่างดำเนินการ สามารถแชทแจ้งแอดมินเข้ามาได้ตลอดเวลาเลยนะครับ 😊</pre
           >
         </div>
 
-        <!-- Template 2: Asking for server name -->
+        <!-- Template 2: Post-creation setup guidelines -->
         <div class="template-card">
           <div class="template-header">
-            <strong>2. ขอชื่อเซิร์ฟเวอร์เพื่อเตรียมระบบ</strong>
+            <strong
+              >2.
+              ขั้นตอนและลิงก์ตั้งค่าหลังการติดตั้งเซิร์ฟเวอร์เสร็จสิ้น</strong
+            >
             <button @click="copyTemplateText($refs.t2)" class="copy-tmpl-btn">
               คัดลอก
             </button>
           </div>
           <pre class="template-text" ref="t2">
-ขณะนี้ทางเราเตรียมระบบ Foundry VTT Server ให้พร้อมใช้งานเรียบร้อยแล้วครับ 🎉
+ยินดีต้อนรับสู่ D&D: For Us ครับ! 🎉 ระบบได้ทำการติดตั้งและตั้งค่าเซิร์ฟเวอร์ของคุณเสร็จสมบูรณ์เรียบร้อยแล้วครับ
 
-เพื่อให้การตั้งค่าเซิร์ฟเวอร์เสร็จสมบูรณ์ รบกวนลูกค้าช่วยตั้ง "ชื่อ" สำหรับเซิร์ฟเวอร์ (ภาษาอังกฤษตัวเลขไม่มีอักขระพิเศษ) เพื่อนำไปใช้เป็นลิงก์เข้าเล่นครับ
+คุณสามารถเข้าไปจัดการและเริ่มใช้งานเซิร์ฟเวอร์ได้ผ่านลิงก์ต่อไปนี้เลยครับ:
 
-ตัวอย่าง: หากตั้งชื่อว่า `{{
-              templatePrefill.serverName || "awesomedm"
-            }}` ลิงก์เข้าห้องเล่นของลูกค้าจะเป็น `{{
-              templatePrefill.serverName || "awesomedm"
-            }}.dnd-for.us` ครับ
+1. 🎮 ลิงก์เข้าเล่นห้อง Foundry VTT:
+   🔗 URL: https://{{ templatePrefill.serverName || "your-server" }}.dnd-for.us
+   *ในการเข้าเล่นครั้งแรก ระบบจะให้คุณตั้งรหัสผ่านผู้ดูแลระบบ (Admin Password) ทันที กรุณาตั้งค่าเพื่อความปลอดภัยด้วยนะครับ*
 
-เมื่อได้รับข้อมูลเรียบร้อยแล้ว ทางเราจะรีบดำเนินการในขั้นตอนสุดท้ายและแจ้งส่งมอบเซิร์ฟเวอร์ให้ทันทีครับ 🏹✨
-ขอบคุณที่ใช้บริการ D&D: For Us 🐉</pre
+2. 💻 แผงควบคุมเซิร์ฟเวอร์ (Console / Restart / Files):
+   🔗 ลิงก์ควบคุม: https://dnd-for.us/server/{{
+              templatePrefill.ID || "your-server"
+            }}
+   *ใช้สำหรับการ สั่งรีสตาร์ทเซิร์ฟเวอร์ เคลียร์ไฟล์ หรือดึงข้อมูลโมดูลต่างๆ ผ่านทางเว็บบอร์ดโดยตรง*
+
+3. 💳 ระบบสมาชิกและการชำระเงินต่ออายุ:
+   🔗 ลิงก์ตรวจสอบ: https://member.dnd-for.us/server/{{
+              templatePrefill.serverName || "your-server"
+            }}
+   *ใช้สำหรับดูสถานะเซิร์ฟเวอร์ ตรวจสอบวันหมดอายุรอบบิล และชำระเงินผ่าน QR Code PromptPay เพื่อต่ออายุในรอบบิลถัดไป*
+
+ขอให้มีความสุขกับแคมเปญใหม่นะครับ! มีคำถามเพิ่มเติมสอบถามแอดมินได้เสมอครับ 🐉✨</pre
           >
         </div>
 
-        <!-- Template 3: Server Delivery -->
+        <!-- Template 3: Guide on self-service renewal -->
         <div class="template-card">
           <div class="template-header">
-            <strong>3. การส่งมอบเซิร์ฟเวอร์ใหม่</strong>
+            <strong>3. แนะนำขั้นตอนการต่ออายุเซิร์ฟเวอร์ด้วยตนเอง</strong>
             <button @click="copyTemplateText($refs.t3)" class="copy-tmpl-btn">
               คัดลอก
             </button>
           </div>
           <pre class="template-text" ref="t3">
-Server Foundry VTT ของคุณพร้อมใช้งานเรียบร้อยแล้วครับ! 🤩
+สวัสดีครับ! ขณะนี้คุณสามารถดำเนินการชำระค่าบริการและต่ออายุเซิร์ฟเวอร์ด้วยตนเองได้อย่างรวดเร็วตลอด 24 ชั่วโมงผ่านระบบสมาชิกเลยครับ 💳
 
-เปิดใช้งานได้ทันทีที่:
-🔗 URL: https://{{ templatePrefill.serverName || "your-campaign" }}.dnd-for.us
-🔑 รหัสผ่าน Admin: สามารถเข้าไปตั้งรหัสผ่านด้วยตนเองในการเข้าเล่นครั้งแรก (เพื่อความปลอดภัย กรุณาตั้งให้เรียบร้อยนะครับ)
+ขั้นตอนการต่ออายุด้วยตนเอง:
+1. เข้าไปที่หน้าเว็บบอร์ดสมาชิกของคุณ:
+   🔗 URL: https://member.dnd-for.us/server/{{
+              templatePrefill.serverName || "your-server"
+            }}
+2. ตรวจสอบสเปคและราคาทั้งหมด จากนั้นกดปุ่ม **"ชำระค่าบริการ / ต่ออายุเซิร์ฟเวอร์"**
+3. (ถ้ามี) กรอกรหัสโปรโมชันของคุณในกล่อง "โค้ดส่วนลด" และกดใช้โค้ดเพื่อรับส่วนลดเพิ่มเติม!
+4. ระบบจะเปิดหน้าต่างสแกน QR Code PromptPay ขึ้นมาโดยอัตโนมัติ
+5. สแกนจ่ายเงินตามยอดที่ระบุ ระบบจะปรับสถานะและขยายสิทธิ์วันหมดอายุรอบบิลใหม่ให้คุณทันทีภายใน 1 นาทีครับ 🎉
 
-💻 คุณสามารถเข้าไปควบคุมเซิร์ฟเวอร์ เช่น สั่ง เปิด/ปิด/รีสตาร์ท เซิร์ฟเวอร์ผ่านระบบ Dashboard ควบคุมเซิร์ฟเวอร์ของเราได้ที่เว็บ https://dnd-for.us
-และสามารถตรวจสอบระบบสมาชิกรวมถึงดูรายละเอียดเพิ่มเติมได้ที่หน้าเว็บ https://member.dnd-for.us
+สิทธิ์การใช้งานของคุณในรอบบิลใหม่นี้จะสิ้นสุดในวันที่ {{
+              templatePrefill.expiryDate || "วันหมดอายุรอบถัดไป"
+            }} ครับ
 
-สิทธิ์การใช้งานรอบบิลนี้จะสิ้นสุดลงในวันที่ {{
-              templatePrefill.expiryDate
-            }} เมื่อใกล้สิ้นรอบบิลระบบจะมีแจ้งเตือนไปอีกทีครับ
-
-ขอบคุณที่ไว้วางใจเช่า Server กับเรา ขอให้เป็น Campaign ที่สนุกสุดมันส์และน่าประทับใจครับ! 😊🐉✨</pre
+ขอบคุณที่ต่ออายุและใช้บริการอย่างต่อเนื่องกับทางเรานะครับ ขอให้แคมเปญราบรื่นและสนุกสุดมันส์ครับ! 😊🐉
+</pre
           >
         </div>
 
-        <!-- Template 4: Renewal success -->
+        <!-- Template 4: Quick troubleshooting instructions -->
         <div class="template-card">
           <div class="template-header">
-            <strong>4. ขอบคุณที่ต่ออายุ</strong>
+            <strong
+              >4. แนะนำวิธีแก้ไขปัญหาเบื้องต้น (เซิร์ฟเวอร์ค้าง /
+              เข้าห้องไม่ได้)</strong
+            >
             <button @click="copyTemplateText($refs.t4)" class="copy-tmpl-btn">
               คัดลอก
             </button>
           </div>
           <pre class="template-text" ref="t4">
-ทางเราได้รับยอดเงินและการแจ้งชำระเงินเรียบร้อยแล้วครับ! 💰
+สวัสดีครับ หากคุณกำลังพบปัญหาเซิร์ฟเวอร์ค้าง โหลดไม่ขึ้น หรือเข้าเล่น Foundry VTT ไม่ได้ คุณสามารถสั่งรีสตาร์ทตัวคอนเทนเนอร์ด้วยตนเองเพื่อแก้ไขปัญหาเบื้องต้นได้ทันทีครับ:
 
-ขอบคุณมากที่ไว้วางใจและสนับสนุนต่ออายุบริการ D&D: For Us เสมอมาครับ 🐉✨
-สามารถตรวจสอบสิทธิประโยชน์ต่างๆ รวมถึงสถานะระบบของคุณเพิ่มเติมได้เสมอที่ member.dnd-for.us/server/{{
+1. เข้าไปที่ระบบจัดการเซิร์ฟเวอร์ของคุณ:
+   🔗 URL: https://dnd-for.us/server/{{
+              templatePrefill.serverName || "your-server"
+            }}
+2. ลงชื่อเข้าใช้งานด้วยบัญชีของคุณ
+3. มองหาตัวเลือกและกดปุ่ม **"Restart Server"** (ระบบจะทำความสะอาด Cache และเริ่มต้นรัน Foundry Container ใหม่ใน 10-15 วินาทีครับ)
+4. เมื่อรีสตาร์ทเสร็จสิ้น ให้ลองรีเฟรชหน้าห้องเล่น Foundry VTT อีกครั้งเพื่อเข้าใช้งานตามปกติ
+
+หากทำตามขั้นตอนรีสตาร์ทดังกล่าวแล้วหน้าเว็บยังใช้งานไม่ได้ หรือพบปัญหาอื่นๆ รบกวนแชทแจ้งแอดมินเพื่อรีบเข้าไปตรวจสอบระบบหลังบ้านให้ทันทีเลยนะครับ! 🛠️✨</pre
+          >
+        </div>
+
+        <!-- Template 5: Welcoming back returning or successfully renewed customers -->
+        <div class="template-card">
+          <div class="template-header">
+            <strong
+              >5. ขอบคุณและต้อนรับลูกค้าเก่า / ลูกค้าต่ออายุสำเร็จ (Welcome Back
+              & Renewal Success)</strong
+            >
+            <button @click="copyTemplateText($refs.t5)" class="copy-tmpl-btn">
+              คัดลอก
+            </button>
+          </div>
+          <pre class="template-text" ref="t5">
+ทางเราได้รับยอดชำระเงินและขยายเวลาการใช้งานเซิร์ฟเวอร์ของคุณเรียบร้อยแล้วครับ 🎉
+
+🎮 ลิงก์เข้าเล่นห้อง Foundry VTT:
+🔗 URL: https://{{ templatePrefill.serverName || "your-server" }}.dnd-for.us
+
+💳 เช็กประวัติและวันหมดอายุสมาชิกได้ที่:
+🔗 URL: https://member.dnd-for.us/server/{{
               templatePrefill.serverName || "your-server"
             }}
 
-สิทธิ์การใช้งานของเซิร์ฟเวอร์คุณในรอบบิลใหม่นี้ได้รับการขยายเป็นที่เรียบร้อย โดยจะสิ้นสุดลงในวันที่ {{
-              templatePrefill.expiryDate
-            }} ครับ
+📅 สิทธิ์การใช้งานรอบบิลใหม่ได้รับการขยายถึงวันที่:
+{{ templatePrefill.expiryDate || "วันหมดอายุรอบถัดไป" }} ครับ
 
-มีข้อสงสัยหรือติดปัญหาระหว่างทำแคมเปญ สามารถติดต่อสอบถามทีมงานได้ตลอดเวลาเลยนะครับ ขอให้สนุกกับแคมเปญใหม่ครับ! 😊✨</pre
+ขอบคุณมาก ๆ นะครับที่ไว้วางใจให้ D&D: For Us ช่วยดูแลเซิร์ฟเวอร์ FoundryVTT ของคุณอย่างต่อเนื่องเสมอมา 🛡️
+
+หากติดปัญหาระหว่างทำแคมเปญใหม่ หรือต้องการเพิ่มสเปค RAM/Storage สามารถส่งข้อความมาหาแอดมินได้ตลอดเวลาเลยนะครับ ขอให้สนุกกับเนื้อเรื่องแคมเปญรอบใหม่ครับ! 😊✨</pre
           >
         </div>
       </div>
@@ -544,6 +608,7 @@ const manualDiscountValue = ref(0);
 // Template Collapsible
 const templatesOpen = ref(false);
 const templatePrefill = ref({
+  ID: "",
   serverName: "",
   expiryDate: dayjs().add(1, "month").format("DD/MM/YYYY"),
 });
@@ -638,6 +703,7 @@ watch(selectedServerId, (newId) => {
 
       // Sync template prefill server name and renewal details
       templatePrefill.value.serverName = s.fields.ServerID;
+      templatePrefill.value.ID = s.fields.DockerID;
       if (s.fields.NextCollect) {
         templatePrefill.value.expiryDate = dayjs(s.fields.NextCollect)
           .add(1, "month")
