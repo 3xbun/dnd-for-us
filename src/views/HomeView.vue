@@ -35,6 +35,8 @@
       </router-link>
     </div>
 
+    <FAQSection />
+
     <BadgesFooter />
   </div>
 </template>
@@ -44,6 +46,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import BadgesFooter from "../components/BadgesFooter.vue";
+import FAQSection from "../components/FAQSection.vue";
 
 const memberID = ref("");
 const router = useRouter();
