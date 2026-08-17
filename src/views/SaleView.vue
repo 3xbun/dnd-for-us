@@ -4,6 +4,11 @@
       <BackButton />
       <h2>D&D For Us - POS Terminal</h2>
       <p class="subtitle">ระบบคำนวณราคาและออกบิลพร้อมเพย์อัจฉริยะ</p>
+      <div class="header-actions">
+        <router-link to="/sale/dashboard" class="dashboard-link-btn">
+          <i class="fa-solid fa-chart-line"></i> แดชบอร์ดฝ่ายขาย (Sales Dashboard)
+        </router-link>
+      </div>
     </div>
 
     <div class="pos-grid">
@@ -949,6 +954,32 @@ onBeforeMount(() => {
   color: #b0b0b0;
   font-size: 0.95em;
   margin: 0;
+}
+
+.header-actions {
+  margin-top: 1.2em;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-link-btn {
+  background-color: #e67e22;
+  color: white;
+  border-radius: 0.5em;
+  padding: 0.6em 1.2em;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: all 0.2s;
+  box-shadow: 0 3px 6px rgba(230, 126, 34, 0.2);
+}
+
+.dashboard-link-btn:hover {
+  background-color: #f39c12;
+  transform: translateY(-1px);
 }
 
 /* Master Layout Grid */

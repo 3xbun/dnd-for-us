@@ -4,10 +4,12 @@ import HomeView from "../views/HomeView.vue";
 import SaleView from "../views/SaleView.vue";
 import MemberView from "../views/MemberView.vue";
 import ServerCreator from "../views/ServerCreator.vue";
+import DashboardView from "../views/Dashboard.vue";
 
 const routes = [
   { path: "/", component: HomeView },
   { path: "/sale", component: SaleView },
+  { path: "/sale/dashboard", component: DashboardView },
   { path: "/server", component: ServerCreator },
   { path: "/server/summary", component: ServerCreator },
   { path: "/server/:memberID/payment", component: MemberView },
