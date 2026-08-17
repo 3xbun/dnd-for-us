@@ -139,11 +139,14 @@
       <ul>
         <li v-for="sale in newSubscribers" :key="sale.id">
           <span>
-            <strong>{{ sale.fields?.Owner?.fields?.FacebookName || 'ไม่ทราบชื่อ' }}</strong>
+            <strong>{{
+              sale.fields?.Owner?.fields?.FacebookName || "ไม่ทราบชื่อ"
+            }}</strong>
+            <br />
             <span class="server-badge">{{ sale.fields?.ServerID }}</span>
           </span>
           <span class="product-title">
-            {{ sale.fields?.Ram || 2 }}GB RAM, {{ sale.fields?.Storage || 5 }}GB SSD
+            {{ getServerPrice(sale) }}฿ / เดือน
           </span>
         </li>
       </ul>
@@ -154,17 +157,28 @@
         <li v-for="sale in nextCollectSales" :key="sale.id">
           <div>
             <span>
-              <strong>{{ sale.fields?.Owner?.fields?.FacebookName || 'ไม่ทราบชื่อ' }}</strong>
+              <strong>{{
+                sale.fields?.Owner?.fields?.FacebookName || "ไม่ทราบชื่อ"
+              }}</strong>
               <span class="server-badge">{{ sale.fields?.ServerID }}</span>
             </span>
             <span class="product-title">
-              {{ dayjs(sale.fields?.NextCollect).add(1, 'day').fromNow() }} (กำหนด: {{ dayjs(sale.fields?.NextCollect).add(1, 'day').format('DD/MM/YYYY') }})
+              {{ dayjs(sale.fields?.NextCollect).add(1, "day").fromNow() }}
+              (กำหนด:
+              {{
+                dayjs(sale.fields?.NextCollect)
+                  .add(1, "day")
+                  .format("DD/MM/YYYY")
+              }})
             </span>
           </div>
           <div class="btns">
             <a
               v-if="sale.fields?.Owner?.fields?.FacebookName"
-              :href="'https://facebook.com/search/top/?q=' + encodeURIComponent(sale.fields?.Owner?.fields?.FacebookName)"
+              :href="
+                'https://facebook.com/search/top/?q=' +
+                encodeURIComponent(sale.fields?.Owner?.fields?.FacebookName)
+              "
               target="_blank"
               class="btn facebook"
               >ค้นหา Facebook <i class="fa-brands fa-facebook-messenger"></i
@@ -181,11 +195,23 @@
       <ul>
         <li v-for="sale in recentChurns" :key="sale.id">
           <span>
-            <strong>{{ sale.fields?.Owner?.fields?.FacebookName || 'ไม่ทราบชื่อ' }}</strong>
-            <span class="server-badge expired">{{ sale.fields?.ServerID }}</span>
+            <strong>{{
+              sale.fields?.Owner?.fields?.FacebookName || "ไม่ทราบชื่อ"
+            }}</strong>
+            <br />
+            <span class="server-badge expired">{{
+              sale.fields?.ServerID
+            }}</span>
           </span>
           <span class="product-title">
-            {{ sale.fields?.Ram || 2 }}GB RAM, {{ sale.fields?.Storage || 5 }}GB SSD (หมดอายุเมื่อ: {{ sale.fields?.NextCollect ? dayjs(sale.fields.NextCollect).add(1, 'day').format('DD/MM/YYYY') : 'ไม่ระบุ' }})
+            {{ getServerPrice(sale) }}฿ / เดือน <br />(หมดอายุเมื่อ:
+            {{
+              sale.fields?.NextCollect
+                ? dayjs(sale.fields.NextCollect)
+                    .add(1, "day")
+                    .format("DD/MM/YYYY")
+                : "ไม่ระบุ"
+            }})
           </span>
         </li>
       </ul>
@@ -207,22 +233,23 @@ const sales = ref([]);
 const getServerPrice = (sale) => {
   const fields = sale.fields;
   if (!fields) return 0;
-  
+
   const basePrice = 89;
-  
+
   const ram = parseInt(fields.Ram) || 2;
   let ramExtra = 0;
   if (ram === 4) ramExtra = 50;
   else if (ram === 8) ramExtra = 150;
-  
+
   const storage = parseInt(fields.Storage) || 5;
   const storageExtra = storage > 5 ? (storage - 5) * 2 : 0;
-  
+
   const licenseExtra = fields.hasLicense ? 0 : 50;
   const heromancerExtra = fields.Heromancer ? 29 : 0;
-  
-  const totalBeforeDiscount = basePrice + ramExtra + storageExtra + licenseExtra + heromancerExtra;
-  
+
+  const totalBeforeDiscount =
+    basePrice + ramExtra + storageExtra + licenseExtra + heromancerExtra;
+
   let discountPercent = 0;
   const monthActive = fields.MonthActive || 0;
   if (monthActive === 5) {
@@ -230,12 +257,14 @@ const getServerPrice = (sale) => {
   } else if (monthActive === 11) {
     discountPercent = 20;
   }
-  
+
   if (fields.isStudent) {
     discountPercent = 20;
   }
-  
-  const discountAmount = Math.round(totalBeforeDiscount * (discountPercent / 100));
+
+  const discountAmount = Math.round(
+    totalBeforeDiscount * (discountPercent / 100),
+  );
   return totalBeforeDiscount - discountAmount;
 };
 
@@ -271,7 +300,8 @@ const nextCollectSales = computed(() => {
 });
 
 const addOneMonth = (sale) => {
-  const currentCollect = sale.fields?.NextCollect || dayjs().format("YYYY-MM-DD");
+  const currentCollect =
+    sale.fields?.NextCollect || dayjs().format("YYYY-MM-DD");
   const nextCollectFormatted = dayjs(currentCollect)
     .add(1, "month")
     .format("YYYY-MM-DD");
@@ -292,7 +322,7 @@ const addOneMonth = (sale) => {
         headers: {
           "xc-token": import.meta.env.VITE_NDB_API,
         },
-      }
+      },
     )
     .then((res) => {
       fetchDashboardData();
@@ -313,14 +343,16 @@ const recentChurns = computed(() => {
 
 const stats = computed(() => {
   const activeSales = sales.value.filter((sale) => sale.fields?.IsActive);
-  const churnedSales = sales.value.filter((sale) => !sale.fields?.IsActive && sale.fields?.ServerID);
+  const churnedSales = sales.value.filter(
+    (sale) => !sale.fields?.IsActive && sale.fields?.ServerID,
+  );
   const newSales = activeSales.filter(
-    (sale) => sale.fields?.MonthActive === 1 || sale.fields?.MonthActive === 0
+    (sale) => sale.fields?.MonthActive === 1 || sale.fields?.MonthActive === 0,
   );
 
   const mrr = activeSales.reduce(
     (total, sale) => total + getServerPrice(sale),
-    0
+    0,
   );
   const activeSub = activeSales.length;
 
@@ -329,26 +361,27 @@ const stats = computed(() => {
 
   const churnedMRR = churnedSales.reduce(
     (total, sale) => total + getServerPrice(sale),
-    0
+    0,
   );
-  
+
   const totalRevenueEver = sales.value.reduce(
-    (total, sale) => total + getServerPrice(sale) * (sale.fields?.MonthActive || 1),
-    0
+    (total, sale) =>
+      total + getServerPrice(sale) * (sale.fields?.MonthActive || 1),
+    0,
   );
   const revenueChurnRate =
     totalRevenueEver > 0 ? churnedMRR / totalRevenueEver : 0;
 
   const newMRR = newSales.reduce(
     (total, sale) => total + getServerPrice(sale),
-    0
+    0,
   );
   const netMRRGrowth = newMRR - churnedMRR;
 
   const newCustomers = newSales.length;
   const totalSubMonths = activeSales.reduce(
     (total, sale) => total + (sale.fields?.MonthActive || 0),
-    0
+    0,
   );
   const avgSubLength = activeSub > 0 ? totalSubMonths / activeSub : 0;
 
@@ -358,7 +391,7 @@ const stats = computed(() => {
   const previous_arpu =
     previous_activeSub > 0 ? previous_mrr / previous_activeSub : 0;
   const previous_newCustomers = sales.value.filter(
-    (s) => s.fields?.IsActive && s.fields?.MonthActive === 2
+    (s) => s.fields?.IsActive && s.fields?.MonthActive === 2,
   ).length;
 
   return {
@@ -397,7 +430,7 @@ const fetchDashboardData = () => {
           limit: "1000",
           where: "",
         },
-      }
+      },
     )
     .then((res) => {
       sales.value = res.data.records || [];
@@ -505,6 +538,7 @@ onBeforeMount(() => {
 .product-title {
   font-style: italic;
   color: #aaa;
+  text-align: right;
 }
 
 .server-badge {
