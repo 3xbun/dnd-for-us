@@ -346,6 +346,12 @@ const stats = computed(() => {
   const churnedSales = sales.value.filter(
     (sale) => !sale.fields?.IsActive && sale.fields?.ServerID,
   );
+  const recentlyChurnedSales = churnedSales.filter((sale) => {
+    if (!sale.fields?.NextCollect) return false;
+    // Churned/expired within the last 30 days
+    return dayjs().diff(dayjs(sale.fields.NextCollect), "days") <= 30;
+  });
+  
   const newSales = activeSales.filter(
     (sale) => sale.fields?.MonthActive === 1 || sale.fields?.MonthActive === 0,
   );
@@ -359,7 +365,7 @@ const stats = computed(() => {
   const customerChurnRate =
     sales.value.length > 0 ? churnedSales.length / sales.value.length : 0;
 
-  const churnedMRR = churnedSales.reduce(
+  const churnedMRR = recentlyChurnedSales.reduce(
     (total, sale) => total + getServerPrice(sale),
     0,
   );
@@ -387,7 +393,7 @@ const stats = computed(() => {
 
   // --- Comparison Stats (Previous Month) ---
   const previous_mrr = mrr - netMRRGrowth;
-  const previous_activeSub = activeSub - (newCustomers - churnedSales.length);
+  const previous_activeSub = activeSub - (newCustomers - recentlyChurnedSales.length);
   const previous_arpu =
     previous_activeSub > 0 ? previous_mrr / previous_activeSub : 0;
   const previous_newCustomers = sales.value.filter(
