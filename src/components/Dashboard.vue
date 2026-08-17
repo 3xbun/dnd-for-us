@@ -1,5 +1,11 @@
 <template>
   <div class="overview">
+    <div class="item highlight-achievement">
+      <p>Lifetime Revenue (รายได้สะสมทั้งหมด)</p>
+      <p class="number green" style="font-size: 2.8em; font-weight: 800">
+        <count-up :end-val="stats.totalRevenueEver" class="inline"></count-up>฿
+      </p>
+    </div>
     <div class="item">
       <p>Active MRR</p>
       <p class="number">
@@ -351,7 +357,7 @@ const stats = computed(() => {
     // Churned/expired within the last 30 days
     return dayjs().diff(dayjs(sale.fields.NextCollect), "days") <= 30;
   });
-  
+
   const newSales = activeSales.filter(
     (sale) => sale.fields?.MonthActive === 1 || sale.fields?.MonthActive === 0,
   );
@@ -393,7 +399,8 @@ const stats = computed(() => {
 
   // --- Comparison Stats (Previous Month) ---
   const previous_mrr = mrr - netMRRGrowth;
-  const previous_activeSub = activeSub - (newCustomers - recentlyChurnedSales.length);
+  const previous_activeSub =
+    activeSub - (newCustomers - recentlyChurnedSales.length);
   const previous_arpu =
     previous_activeSub > 0 ? previous_mrr / previous_activeSub : 0;
   const previous_newCustomers = sales.value.filter(
@@ -409,6 +416,7 @@ const stats = computed(() => {
     arpu: activeSub > 0 ? mrr / activeSub : 0,
     newCustomers,
     avgSubLength,
+    totalRevenueEver,
     comparison: {
       mrr: previous_mrr,
       activeSub: previous_activeSub,
@@ -497,7 +505,7 @@ onBeforeMount(() => {
   margin-right: 0.25em;
 }
 
-.number.green {
+.green {
   color: #42b983;
 }
 
@@ -561,6 +569,15 @@ onBeforeMount(() => {
 
 .server-badge.expired {
   background-color: #db292f;
+}
+
+.highlight-achievement {
+  border: 2px solid #27ae60 !important;
+  background: linear-gradient(135deg, #353535 0%, #1a4225 100%) !important;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2) !important;
+  flex-basis: 100% !important; /* Spans full width for a premium look */
+  text-align: center !important;
+  align-items: center !important;
 }
 
 .btn {
