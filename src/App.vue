@@ -5,10 +5,13 @@
       <h1>D&D: For Us</h1>
     </header>
     <RouterView />
+    <FooterComp />
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import FooterComp from "./components/FooterComp.vue";
+</script>
 
 <style lang="css" scoped>
 header {
