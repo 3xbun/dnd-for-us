@@ -1,11 +1,20 @@
 <template>
   <div class="faq-container">
-    <h2>คำถามที่พบบ่อย (FAQ)</h2>
-    <p class="faq-desc">
-      ค้นหาคำตอบสำหรับข้อสงสัยทั่วไปเกี่ยวกับการใช้งานและบริการเซิร์ฟเวอร์
-    </p>
+    <button
+      class="faq-toggle"
+      type="button"
+      :aria-expanded="faqOpen"
+      aria-controls="faq-list"
+      @click="faqOpen = !faqOpen"
+    >
+      <span>
+        <strong>คำถามที่พบบ่อย (FAQ)</strong>
+        <small>ค้นหาคำตอบเกี่ยวกับการใช้งานและบริการเซิร์ฟเวอร์</small>
+      </span>
+      <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+    </button>
 
-    <div class="faq-list">
+    <div v-show="faqOpen" id="faq-list" class="faq-list">
       <div
         v-for="(faq, index) in faqs"
         :key="index"
@@ -37,6 +46,7 @@
 <script setup>
 import { ref } from "vue";
 
+const faqOpen = ref(false);
 const activeIndex = ref(null);
 
 const faqs = ref([
@@ -154,21 +164,54 @@ const toggleFAQ = (index) => {
   box-sizing: border-box;
 }
 
-h2 {
-  color: #ffde59;
-  font-size: 1.5em;
-  margin: 0 0 0.3em 0;
-  text-align: center;
+.faq-toggle {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  text-align: left;
+  cursor: pointer;
 }
 
-.faq-desc {
+.faq-toggle strong,
+.faq-toggle small {
+  display: block;
+}
+
+.faq-toggle strong {
+  color: #ffde59;
+  font-size: 1.5em;
+}
+
+.faq-toggle small {
+  margin-top: 0.3em;
   color: #b0b0b0;
   font-size: 0.9em;
-  margin: 0 0 1.5em 0;
-  text-align: center;
+  font-weight: normal;
+}
+
+.faq-toggle > i {
+  color: #888888;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.faq-toggle[aria-expanded="true"] > i {
+  color: #db292f;
+  transform: rotate(180deg);
+}
+
+.faq-toggle:focus-visible {
+  outline: 2px solid #ffde59;
+  outline-offset: 0.35em;
 }
 
 .faq-list {
+  margin-top: 1.5em;
   display: flex;
   flex-direction: column;
   gap: 0.8em;
