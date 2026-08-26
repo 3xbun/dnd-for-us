@@ -211,6 +211,10 @@
           <i class="fa-solid fa-duotone fa-credit-card"></i> ชำระค่าบริการ /
           ต่ออายุเซิร์ฟเวอร์ (฿{{ renewPrice }})
         </button>
+        <button class="change-server-btn" @click="openChangeServer">
+          <i class="fa-solid fa-duotone fa-sliders"></i>
+          อัปเกรดหรือเปลี่ยนสเปคเซิร์ฟเวอร์
+        </button>
       </div>
 
       <div class="stamps">
@@ -257,6 +261,80 @@
       @close="showPaymentModal = false"
       v-if="loaded"
     />
+
+    <div
+      v-if="showChangeServer"
+      class="change-server-overlay"
+      @click.self="showChangeServer = false"
+    >
+      <div class="change-server-modal">
+        <button class="change-server-close" @click="showChangeServer = false">
+          &times;
+        </button>
+        <h2>อัปเกรดหรือเปลี่ยนสเปค</h2>
+        <p class="change-server-subtitle">
+          เลือกสเปคใหม่สำหรับ {{ informations.fields.ServerID }} แล้วส่งคำขอให้ทีมงานตรวจสอบ
+        </p>
+
+        <div class="change-server-form">
+          <label>หน่วยความจำ (RAM)</label>
+          <div class="change-options">
+            <button
+              v-for="option in memoryOptions"
+              :key="option.size"
+              :class="{ active: changeRequest.ram === option.size }"
+              @click="changeRequest.ram = option.size"
+            >
+              {{ option.size }} GB
+              <small v-if="option.extra > 0">+฿{{ option.extra }}/เดือน</small>
+            </button>
+          </div>
+
+          <label>พื้นที่จัดเก็บ SSD: {{ changeRequest.storage }} GB</label>
+          <input
+            v-model.number="changeRequest.storage"
+            type="range"
+            min="5"
+            max="50"
+            step="5"
+          />
+
+          <label>ลิขสิทธิ์ Foundry VTT</label>
+          <div class="change-options">
+            <button
+              :class="{ active: changeRequest.hasLicense }"
+              @click="changeRequest.hasLicense = true"
+            >
+              ใช้คีย์ของตัวเอง
+            </button>
+            <button
+              :class="{ active: !changeRequest.hasLicense }"
+              @click="changeRequest.hasLicense = false"
+            >
+              ยืมคีย์เรา (+฿50/เดือน)
+            </button>
+          </div>
+
+          <label class="change-checkbox">
+            <input v-model="changeRequest.heromancer" type="checkbox" />
+            ติดตั้ง Heromancer (+฿29/เดือน)
+          </label>
+        </div>
+
+        <div class="change-price-summary">
+          <span>ราคาใหม่ต่อเดือน</span>
+          <strong>฿{{ changeMonthlyPrice }}</strong>
+          <span :class="changePriceDifference <= 0 ? 'price-saving' : 'price-increase'">
+            {{ changePriceDifference <= 0 ? "ประหยัด" : "เพิ่มขึ้น" }} ฿{{ Math.abs(changePriceDifference) }} / เดือน
+          </span>
+        </div>
+
+        <button class="change-submit-btn" @click="submitChangeRequest">
+          <i class="fa-brands fa-facebook-messenger"></i>
+          ส่งคำขอให้ทีมงานทาง Messenger
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -287,6 +365,19 @@ const loaded = ref(false);
 const memberID = route.params.memberID;
 const informations = ref([]);
 const showPaymentModal = ref(false);
+const showChangeServer = ref(false);
+const changeRequest = ref({
+  ram: 2,
+  storage: 5,
+  hasLicense: true,
+  heromancer: false,
+});
+
+const memoryOptions = [
+  { size: 2, extra: 0 },
+  { size: 4, extra: 50 },
+  { size: 8, extra: 150 },
+];
 
 // Sync showPaymentModal and route path
 watch(
@@ -468,6 +559,61 @@ const renewPrice = computed(() => {
   );
   return totalBeforeDiscount - discountAmount;
 });
+
+const serverMonthlyPrice = computed(() => {
+  const fields = informations.value?.fields;
+  if (!fields) return 0;
+  const ram = parseInt(fields.Ram) || 2;
+  const storage = parseInt(fields.Storage) || 5;
+  const ramExtra = ram === 8 ? 150 : ram === 4 ? 50 : 0;
+  return 89 + ramExtra + Math.max(0, storage - 5) * 2 +
+    (fields.hasLicense ? 0 : 50) + (fields.Heromancer ? 29 : 0);
+});
+
+const changeMonthlyPrice = computed(() => {
+  const ramExtra = changeRequest.value.ram === 8
+    ? 150
+    : changeRequest.value.ram === 4
+      ? 50
+      : 0;
+  return 89 + ramExtra + Math.max(0, changeRequest.value.storage - 5) * 2 +
+    (changeRequest.value.hasLicense ? 0 : 50) +
+    (changeRequest.value.heromancer ? 29 : 0);
+});
+
+const changePriceDifference = computed(
+  () => changeMonthlyPrice.value - serverMonthlyPrice.value,
+);
+
+const openChangeServer = () => {
+  const fields = informations.value.fields;
+  changeRequest.value = {
+    ram: parseInt(fields.Ram) || 2,
+    storage: parseInt(fields.Storage) || 5,
+    hasLicense: !!fields.hasLicense,
+    heromancer: !!fields.Heromancer,
+  };
+  showChangeServer.value = true;
+};
+
+const submitChangeRequest = async () => {
+  const fields = informations.value.fields;
+  const requestText = `คำขออัปเกรด/เปลี่ยนสเปคเซิร์ฟเวอร์ D&D: For Us
+
+เซิร์ฟเวอร์: ${fields.ServerID}
+สเปคเดิม: ${fields.Ram || 2} GB RAM, ${fields.Storage || 5} GB SSD, ${fields.hasLicense ? "ใช้คีย์ตัวเอง" : "ยืมคีย์ D&D For Us"}, ${fields.Heromancer ? "มี Heromancer" : "ไม่มี Heromancer"}
+สเปคใหม่: ${changeRequest.value.ram} GB RAM, ${changeRequest.value.storage} GB SSD, ${changeRequest.value.hasLicense ? "ใช้คีย์ตัวเอง" : "ยืมคีย์ D&D For Us"}, ${changeRequest.value.heromancer ? "ติดตั้ง Heromancer" : "ไม่ติดตั้ง Heromancer"}
+ราคาใหม่: ฿${changeMonthlyPrice.value}/เดือน
+ส่วนต่าง: ${changePriceDifference.value >= 0 ? "+" : "-"}฿${Math.abs(changePriceDifference.value)}/เดือน`;
+
+  try {
+    await navigator.clipboard.writeText(requestText);
+    alert("คัดลอกรายละเอียดคำขอแล้ว กรุณาส่งข้อความนี้ให้ทีมงานใน Messenger");
+  } catch (error) {
+    console.error("Unable to copy change request", error);
+  }
+  window.open("https://m.me/dnd-for.us", "_blank", "noopener,noreferrer");
+};
 
 onMounted(() => {
   axios
@@ -709,6 +855,163 @@ td:first-child {
   transform: translateY(0);
 }
 
+.change-server-btn {
+  margin-top: 0.75em;
+  width: 100%;
+  padding: 0.75em 1em;
+  border: 1px solid #3498db;
+  border-radius: 0.6em;
+  background-color: transparent;
+  color: #72c4ff;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.change-server-btn:hover {
+  background-color: rgba(52, 152, 219, 0.15);
+}
+
+.change-server-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: 1em;
+  background-color: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.change-server-modal {
+  position: relative;
+  width: min(100%, 30rem);
+  max-height: calc(100vh - 2em);
+  overflow-y: auto;
+  padding: 1.5em;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 0.8em;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+}
+
+.change-server-close {
+  position: absolute;
+  top: 0.5em;
+  right: 0.75em;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 1.7em;
+  cursor: pointer;
+}
+
+.change-server-modal h2 {
+  margin: 0 2em 0.35em 0;
+  color: #ffde59;
+  font-size: 1.35em;
+}
+
+.change-server-subtitle {
+  margin: 0 0 1.25em;
+  color: #b0b0b0;
+  font-size: 0.9em;
+}
+
+.change-server-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+}
+
+.change-server-form label {
+  margin-top: 0.35em;
+  color: #f5f5f5;
+  font-weight: bold;
+}
+
+.change-server-form input[type="range"] {
+  width: 100%;
+  accent-color: #db292f;
+}
+
+.change-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5em;
+}
+
+.change-options button {
+  min-height: 3.2em;
+  padding: 0.5em;
+  border: 1px solid #555;
+  border-radius: 0.45em;
+  background-color: #1a1a1a;
+  color: #eee;
+  cursor: pointer;
+}
+
+.change-options button.active {
+  border-color: #ffde59;
+  background-color: #3b351d;
+  color: #ffde59;
+}
+
+.change-options small {
+  display: block;
+  margin-top: 0.25em;
+  color: #b0b0b0;
+}
+
+.change-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.change-price-summary {
+  display: grid;
+  gap: 0.25em;
+  margin-top: 1.25em;
+  padding: 1em;
+  background-color: #1a1a1a;
+  border-radius: 0.5em;
+  text-align: center;
+}
+
+.change-price-summary strong {
+  color: #ffde59;
+  font-size: 1.8em;
+}
+
+.price-saving {
+  color: #2ecc71;
+}
+
+.price-increase {
+  color: #ff8a80;
+}
+
+.change-submit-btn {
+  width: 100%;
+  margin-top: 1em;
+  padding: 0.8em 1em;
+  border: 0;
+  border-radius: 0.5em;
+  background-color: #168aff;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.change-submit-btn:hover {
+  background-color: #3ca0ff;
+}
+
 .server-link-container {
   display: flex;
   align-items: center;
@@ -863,6 +1166,10 @@ td:first-child {
   .pay-now-btn {
     font-size: 1em;
     padding: 0.8em 1.5em;
+  }
+
+  .change-options {
+    grid-template-columns: 1fr;
   }
 }
 </style>
