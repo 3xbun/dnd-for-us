@@ -1,9 +1,12 @@
 <template>
   <footer class="footer">
     <div class="footer-bottom">
-      <p>D&D: For Us © {{ new Date().getFullYear() }}</p>
+      <p class="copyright-line">
+        <img src="/imgs/logo.png" alt="D&D: For Us logo" />
+        <span>D&D: For Us © {{ new Date().getFullYear() }}</span>
+      </p>
       <p class="subtitle">
-        บริการเช่าเซิร์ฟเวอร์ Foundry VTT ในประเทศไทย โดยคนไทย เพื่อคนไทย
+        บริการเช่าเซิร์ฟเวอร์ Foundry VTT ในประเทศไทย โดยคนไทย เพื่อคนไทย 🇹🇭
       </p>
       <div class="social-links">
         <a
@@ -36,6 +39,17 @@ import BadgesFooter from "./BadgesFooter.vue";
 }
 .footer-bottom {
   margin-top: 1.5em;
+}
+.copyright-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+}
+.copyright-line img {
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .subtitle {
   font-size: 0.8em;
