@@ -61,51 +61,37 @@
 
       <!-- Step Content Area -->
       <div class="step-content-wrapper">
-        <!-- STEP 1: Server Name -->
+        <!-- STEP 1: Billing Term -->
         <div v-show="currentStep === 1" class="step-container">
           <div class="form-section">
-            <h3>1. ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
+            <h3>1. เลือกรอบการชำระเงิน</h3>
             <p class="section-desc">
-              ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
-              (ภาษาอังกฤษและตัวเลขเท่านั้น)
+              เลือกแผนที่เหมาะกับแคมเปญของคุณ
             </p>
-
-            <div class="input-wrapper">
-              <input
-                type="text"
-                v-model="serverName"
-                @input="normalizeServerName"
-                placeholder="เช่น my-epic-campaign"
-                class="styled-input"
-                maxlength="30"
-              />
-              <span class="subdomain-suffix">.dnd-for.us</span>
+            <div class="grid-options">
+              <div
+                v-for="term in billingTerms"
+                :key="term.months"
+                class="option-card billing-term-card"
+                :class="{ active: selectedBillingMonths === term.months }"
+                @click="selectedBillingMonths = term.months"
+              >
+                <div class="card-radio">
+                  <span class="radio-dot"></span>
+                </div>
+                <div class="card-details">
+                  <div class="card-title">
+                    {{ term.label }}
+                    <span v-if="term.discountPercent > 0" class="badge-gold">
+                      ประหยัด {{ term.discountPercent }}%
+                    </span>
+                  </div>
+                  <p class="card-price">
+                    เริ่มต้น ฿{{ termStartingPrice(term) }}
+                  </p>
+                </div>
+              </div>
             </div>
-
-            <!-- Live URL Preview -->
-            <div
-              class="url-preview"
-              :class="{
-                'preview-valid': isNameValid,
-                'preview-invalid': serverName && !isNameValid,
-              }"
-            >
-              <div class="preview-dot"></div>
-              <span class="preview-text">
-                ลิงก์เข้าเล่นของคุณจะเป็น:
-                <strong
-                  >https://{{
-                    serverNameNormalized || "your-campaign"
-                  }}.dnd-for.us</strong
-                >
-              </span>
-            </div>
-            <p
-              v-if="serverName && serverName.length < 3"
-              class="validation-warning"
-            >
-              ⚠️ ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
-            </p>
           </div>
         </div>
 
@@ -295,6 +281,50 @@
 
         <!-- STEP 5: Premium Add-ons & Summary -->
         <div v-show="currentStep === 5" class="step-container">
+          <div class="form-section">
+            <h3>5. ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
+            <p class="section-desc">
+              ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
+              (ภาษาอังกฤษและตัวเลขเท่านั้น)
+            </p>
+
+            <div class="input-wrapper">
+              <input
+                type="text"
+                v-model="serverName"
+                @input="normalizeServerName"
+                placeholder="เช่น my-epic-campaign"
+                class="styled-input"
+                maxlength="30"
+              />
+              <span class="subdomain-suffix">.dnd-for.us</span>
+            </div>
+
+            <div
+              class="url-preview"
+              :class="{
+                'preview-valid': isNameValid,
+                'preview-invalid': serverName && !isNameValid,
+              }"
+            >
+              <div class="preview-dot"></div>
+              <span class="preview-text">
+                ลิงก์เข้าเล่นของคุณจะเป็น:
+                <strong
+                  >https://{{
+                    serverNameNormalized || "your-campaign"
+                  }}.dnd-for.us</strong
+                >
+              </span>
+            </div>
+            <p
+              v-if="serverName && serverName.length < 3"
+              class="validation-warning"
+            >
+              ⚠️ ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
+            </p>
+          </div>
+
           <!-- Premium Add-ons -->
           <div class="form-section">
             <h3>6. ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
@@ -361,10 +391,20 @@
 
             <hr class="summary-divider" />
 
+            <div class="summary-row">
+              <span>รอบชำระเงิน</span>
+              <span>{{ selectedBillingLabel }}</span>
+            </div>
+            <div class="summary-row" v-if="billingDiscountAmount > 0">
+              <span>ส่วนลดรอบชำระ</span>
+              <span>- ฿{{ billingDiscountAmount }}</span>
+            </div>
+
             <div class="total-row">
-              <span>รวมยอดที่ต้องชำระรายเดือน</span>
+              <span>รวมยอดที่ต้องชำระ</span>
               <span class="total-price"
-                >฿{{ totalPrice }} <span class="per-month">/ เดือน</span></span
+                >฿{{ totalPrice }}
+                <span class="per-month">/ {{ selectedBillingLabel }}</span></span
               >
             </div>
           </div>
@@ -493,11 +533,11 @@ import BackButton from "../components/BackButton.vue";
 // Wizard Steps Configuration
 const currentStep = ref(1);
 const stepTitles = ref([
-  "ชื่อเซิร์ฟเวอร์",
+  "รอบการชำระเงิน",
   "เวอร์ชันระบบ",
   "สเปคเครื่อง (RAM & SSD)",
   "ลิขสิทธิ์ระบบ",
-  "ตัวเลือกเสริม & สรุปรายการ",
+  "ชื่อเซิร์ฟเวอร์ & สรุปรายการ",
 ]);
 
 // Floating sticker visibility state
@@ -550,6 +590,12 @@ const selectedMemory = ref(2);
 const selectedStorage = ref(5);
 const licenseOption = ref("own"); // 'own' or 'borrow'
 const plutoniumAddon = ref(false); // Heromancer integration flag
+const billingTerms = [
+  { months: 1, label: "รายเดือน", discountPercent: 0 },
+  { months: 6, label: "ราย 6 เดือน", discountPercent: 5 },
+  { months: 12, label: "รายปี", discountPercent: 10 },
+];
+const selectedBillingMonths = ref(1);
 
 const route = useRoute();
 const router = useRouter();
@@ -586,7 +632,6 @@ const isPrevDisabled = computed(() => {
 
 const isNextDisabled = computed(() => {
   if (currentStep.value >= 5) return true;
-  if (currentStep.value === 1 && !isNameValid.value) return true;
   return false;
 });
 
@@ -607,10 +652,6 @@ const prevStep = () => {
 };
 
 const goToStep = (step) => {
-  if (step > 1 && !isNameValid.value) {
-    currentStep.value = 1;
-    return;
-  }
   currentStep.value = step;
 };
 
@@ -713,13 +754,44 @@ const plutoniumExtraPrice = computed(() => {
   return plutoniumAddon.value ? plutoniumPrice.value : 0;
 });
 
-const totalPrice = computed(() => {
+const monthlyPrice = computed(() => {
   return (
     basePrice.value +
     currentMemoryExtra.value +
     currentStorageExtra.value +
     licenseExtraPrice.value +
     plutoniumExtraPrice.value
+  );
+});
+
+const selectedBillingTerm = computed(() => {
+  return billingTerms.find(
+    (term) => term.months === selectedBillingMonths.value,
+  );
+});
+
+const selectedBillingLabel = computed(
+  () => selectedBillingTerm.value?.label || "รายเดือน",
+);
+
+const billingDiscountAmount = computed(() => {
+  return Math.round(
+    monthlyPrice.value *
+      selectedBillingMonths.value *
+      ((selectedBillingTerm.value?.discountPercent || 0) / 100),
+  );
+});
+
+const termStartingPrice = (term) => {
+  return Math.round(
+    basePrice.value * term.months * (1 - term.discountPercent / 100),
+  );
+};
+
+const totalPrice = computed(() => {
+  return (
+    monthlyPrice.value * selectedBillingMonths.value -
+    billingDiscountAmount.value
   );
 });
 
@@ -744,7 +816,9 @@ const formattedOrderText = computed(() => {
 🔑 สถานะสิทธิ์ License: ${licenseText}
 ✨ ส่วนเสริมพรีเมียม: ${plutoniumText}
 -----------------------------------------
-💵 ค่าบริการรวมรายเดือน: ฿${totalPrice.value} / เดือน
+💵 รอบชำระเงิน: ${selectedBillingLabel.value}
+💵 ค่าบริการรวม: ฿${totalPrice.value}
+📌 ราคาเฉลี่ยต่อเดือน: ฿${Math.round(totalPrice.value / selectedBillingMonths.value)}
 -----------------------------------------
 🎉 สนใจรันระบบตามสเปคด้านบนนี้ 🎉`;
 });
@@ -778,6 +852,7 @@ const resetForm = () => {
   selectedStorage.value = 5;
   licenseOption.value = "own";
   plutoniumAddon.value = false;
+  selectedBillingMonths.value = 1;
   isOrdered.value = false;
   isCopied.value = false;
   currentStep.value = 1;
