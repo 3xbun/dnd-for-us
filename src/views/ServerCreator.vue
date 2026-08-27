@@ -509,9 +509,11 @@
     <Transition name="slide-up">
       <div v-if="showSticker && !isOrdered" class="floating-sticker">
         <div class="sticker-info">
-          <span class="sticker-label">ยอดรวมตอนนี้</span>
+          <span class="sticker-label">ราคาเฉลี่ยต่อเดือน</span>
           <div class="sticker-price-box">
-            <span class="sticker-price">฿{{ totalPrice }}</span>
+            <span class="sticker-price"
+              >฿{{ Math.round(totalPrice / selectedBillingMonths) }}</span
+            >
             <span class="sticker-period">/ เดือน</span>
           </div>
         </div>
