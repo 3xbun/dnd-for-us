@@ -5,9 +5,9 @@
     <!-- Active Form View (Wizard Flow) -->
     <div v-if="!isOrdered" class="creator-card">
       <div class="creator-header">
-        <h2>สร้างเซิร์ฟเวอร์ Foundry VTT ของคุณ</h2>
+        <h2>สร้างเซิร์ฟเวอร์ Foundry VTT</h2>
         <p class="subtitle">
-          ปรับแต่งสเปคเซิร์ฟเวอร์และสิทธิ์การใช้งานตามต้องการ
+          เลือกสเปคและบริการเสริมให้เหมาะกับแคมเปญของคุณ
         </p>
       </div>
 
@@ -66,7 +66,7 @@
           <div class="form-section">
             <h3>เลือกรอบการชำระเงิน</h3>
             <p class="section-desc">
-              เลือกแผนที่เหมาะกับแคมเปญของคุณ
+              เลือกชำระเงินรายเดือน ราย 6 เดือน หรือรายปี
             </p>
             <div class="grid-options">
               <div
@@ -104,7 +104,7 @@
           <div class="form-section">
             <h3>เลือกเวอร์ชัน Foundry VTT</h3>
             <p class="section-desc">
-              กรุณาเลือกเวอร์ชันที่เหมาะสมกับระบบและ Module ที่ต้องการใช้งาน
+              เลือกเวอร์ชันที่รองรับระบบและโมดูลที่คุณต้องการใช้งาน
             </p>
 
             <div class="grid-options">
@@ -134,10 +134,9 @@
         <div v-show="currentStep === 3" class="step-container">
           <!-- Memory Option (RAM) -->
           <div class="form-section">
-            <h3>เลือกสเปคเซิร์ฟเวอร์ (Memory / RAM & SSD)</h3>
+            <h3>เลือกระดับประสิทธิภาพเซิร์ฟเวอร์</h3>
             <p class="section-desc">
-              จำนวน RAM ที่มากขึ้นช่วยเพิ่มความลื่นไหลเมื่อมีผู้เล่นหลายคน
-              หรือเมื่อใส่ Module และฉากขนาดใหญ่
+              เลือกจากจำนวนผู้เล่นและรูปแบบการเล่นที่เหมาะกับแคมเปญของคุณ
             </p>
 
             <div class="grid-options">
@@ -153,9 +152,10 @@
                 </div>
                 <div class="card-details">
                   <div class="card-title">
-                    {{ mem.size }} GB RAM
+                    {{ mem.label }}
                     <span v-if="mem.isPopular" class="badge-gold">ยอดนิยม</span>
                   </div>
+                  <span class="memory-spec">RAM {{ mem.size }} GB</span>
                   <p class="card-desc">{{ mem.recommendation }}</p>
                   <p class="card-price" v-if="mem.extraPrice > 0">
                     + ฿{{ mem.extraPrice }} / เดือน
@@ -170,8 +170,8 @@
           <div class="form-section">
             <h3>กำหนดพื้นที่เก็บข้อมูล (Custom SSD Storage)</h3>
             <p class="section-desc">
-              พื้นที่สำหรับจัดเก็บแผนที่, รูปภาพ และไฟล์เสียง (พื้นที่เริ่มต้น 5
-              GB ฟรี! เพิ่มเติมคิดราคาเพียง ฿2 ต่อ GB)
+              ใช้สำหรับเก็บแผนที่ รูปภาพ และไฟล์เสียง เริ่มต้น 5 GB ฟรี
+              เพิ่มพื้นที่ในราคาเพียง ฿2 ต่อ GB
             </p>
 
             <div class="custom-storage-box">
@@ -238,7 +238,7 @@
           <div class="form-section">
             <h3>สิทธิ์การใช้งานลิขสิทธิ์ (Foundry VTT License)</h3>
             <p class="section-desc">
-              คุณมี License Key ของตนเองเพื่อใช้ FoundryVTT แล้วหรือไม่?
+              คุณมี License Key ของตัวเองสำหรับใช้งาน Foundry VTT แล้วหรือยัง?
             </p>
 
             <div class="grid-options">
@@ -251,10 +251,9 @@
                   <span class="radio-dot"></span>
                 </div>
                 <div class="card-details">
-                  <div class="card-title">ใช้คีย์ของตัวเอง</div>
+                  <div class="card-title">ใช้ License Key ของตัวเอง</div>
                   <p class="card-desc">
-                    มี License Key ที่ซื้อมาเองแล้ว สามารถนำไปกรอกใน Server
-                    ได้ทันที
+                    มี License Key อยู่แล้ว นำมาใช้กับเซิร์ฟเวอร์นี้ได้ทันที
                   </p>
                   <p class="card-price">ไม่มีค่าใช้จ่ายเพิ่มเติม (+ ฿0)</p>
                 </div>
@@ -270,11 +269,12 @@
                 </div>
                 <div class="card-details">
                   <div class="card-title">
-                    ขอยืมสิทธิ์การใช้งานจากทางเรา
+                    ยืม License Key จากเรา
                     <span class="badge-accent">มีระบบช่วยเหลือ</span>
                   </div>
                   <p class="card-desc">
-                    ยังไม่มีคีย์ แต่อยากเริ่มเล่นทันที ขอยืมคีย์ของ D&D For Us
+                    ยังไม่มีคีย์ใช่ไหม? ยืม License Key จาก D&D For Us
+                    แล้วเริ่มเล่นได้ทันที
                   </p>
                   <p class="card-price">+ ฿{{ borrowLicensePrice }} / เดือน</p>
                 </div>
@@ -288,8 +288,8 @@
           <div class="form-section">
             <h3>ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
             <p class="section-desc">
-              ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
-              (ภาษาอังกฤษและตัวเลขเท่านั้น)
+              ชื่อนี้จะใช้เป็นส่วนหนึ่งของลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์
+              (ใช้ภาษาอังกฤษ ตัวเลข และเครื่องหมายขีดกลางเท่านั้น)
             </p>
 
             <div class="input-wrapper">
@@ -325,7 +325,7 @@
               v-if="serverName && serverName.length < 3"
               class="validation-warning"
             >
-              ⚠️ ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
+              ชื่อเซิร์ฟเวอร์ต้องมีความยาวอย่างน้อย 3 ตัวอักษร
             </p>
           </div>
 
@@ -333,7 +333,7 @@
           <div class="form-section">
             <h3>ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
             <p class="section-desc">
-              เพิ่มขีดความสามารถพิเศษในการเล่นด้วยโมดูลเสริมระดับพรีเมียมที่มีประสิทธิภาพสูงสุด
+              เพิ่มความสามารถให้เซิร์ฟเวอร์ด้วยโมดูลพรีเมียมสำหรับการเล่นที่สะดวกยิ่งขึ้น
             </p>
 
             <div class="grid-options">
@@ -363,11 +363,11 @@
 
           <!-- Live Price Calculation Panel -->
           <div class="summary-panel" ref="summaryPanel">
-            <h4 class="summary-title">สรุปราคาสเปคที่คุณเลือก</h4>
+            <h4 class="summary-title">สรุปรายการและค่าใช้บริการ</h4>
 
             <div class="summary-rows">
               <div class="summary-row">
-                <span>เซิร์ฟเวอร์เริ่มต้น</span>
+                <span>ค่าบริการเซิร์ฟเวอร์</span>
                 <span>฿{{ basePrice }}</span>
               </div>
               <div class="summary-row" v-if="currentMemoryExtra > 0">
@@ -384,11 +384,11 @@
                 <span>+ ฿{{ currentStorageExtra }}</span>
               </div>
               <div class="summary-row" v-if="licenseOption === 'borrow'">
-                <span>ค่าธรรมเนียมยืมคีย์ FoundryVTT</span>
+                <span>ค่าบริการยืม License Key</span>
                 <span>+ ฿{{ borrowLicensePrice }}</span>
               </div>
               <div class="summary-row" v-if="plutoniumAddon">
-                <span>ส่วนเสริมพรีเมียม Plutonium: Heromancer</span>
+                <span>ส่วนเสริมพรีเมียม: Heromancer</span>
                 <span>+ ฿{{ plutoniumPrice }}</span>
               </div>
             </div>
@@ -396,7 +396,7 @@
             <hr class="summary-divider" />
 
             <div class="summary-row">
-              <span>รอบชำระเงิน</span>
+              <span>รอบการชำระเงิน</span>
               <span>{{ selectedBillingLabel }}</span>
             </div>
             <div class="summary-row" v-if="billingDiscountAmount > 0">
@@ -408,7 +408,7 @@
             </div>
 
             <div class="total-row">
-              <span>รวมยอดที่ต้องชำระ</span>
+              <span>ยอดชำระทั้งหมด</span>
               <span class="total-price"
                 >฿{{ totalPrice }}
                 <span class="per-month">/ {{ selectedBillingLabel.replace("ราย", "") }}</span></span
@@ -456,15 +456,15 @@
     <!-- Success View -->
     <div v-else class="creator-card success-card">
       <div class="success-header">
-        <h2>สั่งซื้อเซิร์ฟเวอร์เสร็จสมบูรณ์!</h2>
+        <h2>เตรียมคำสั่งซื้อเรียบร้อยแล้ว!</h2>
         <p class="success-subtitle">
-          เราเตรียมข้อมูลสเปคและคำสั่งซื้อของคุณเรียบร้อยแล้ว
+          ตรวจสอบรายละเอียด แล้วส่งข้อมูลให้แอดมินเพื่อเริ่มติดตั้งเซิร์ฟเวอร์
         </p>
       </div>
 
       <div class="success-details">
         <p class="instruction-text">
-          คัดลอกข้อความสเปคด้านล่างนี้ และส่งให้แอดมินทาง
+          คัดลอกข้อความด้านล่าง แล้วส่งให้แอดมินทาง
           <a
             href="https://m.me/dnd-for.us"
             target="_blank"
@@ -472,7 +472,7 @@
             class="messenger-link"
             >แชท Facebook</a
           >
-          เพื่อดำเนินการรันเซิร์ฟเวอร์ให้คุณทันที!
+          เพื่อให้เราดำเนินการติดตั้งเซิร์ฟเวอร์ให้คุณ
         </p>
 
         <!-- Spec Output Box -->
@@ -483,10 +483,10 @@
         <!-- Copy Action Button -->
         <button @click="copyOrderText" class="copy-btn">
           <span v-if="!isCopied"
-            >คัดลอกสเปคเซิร์ฟเวอร์ <i class="fa-solid fa-duotone fa-copy"></i
+            >คัดลอกรายละเอียดคำสั่งซื้อ <i class="fa-solid fa-duotone fa-copy"></i
           ></span>
           <span v-else
-            >คัดลอกสำเร็จแล้ว! <i class="fa-solid fa-duotone fa-check"></i
+            >คัดลอกแล้ว! <i class="fa-solid fa-duotone fa-check"></i
           ></span>
         </button>
 
@@ -497,7 +497,7 @@
           rel="noopener noreferrer"
           class="messenger-btn"
         >
-          ส่งสเปคทาง Facebook Messenger
+          ส่งรายละเอียดทาง Facebook Messenger
           <i class="fa-brands fa-facebook-messenger"></i>
         </a>
       </div>
@@ -543,10 +543,10 @@ import BackButton from "../components/BackButton.vue";
 const currentStep = ref(1);
 const stepTitles = ref([
   "รอบการชำระเงิน",
-  "เวอร์ชันระบบ",
+  "เวอร์ชัน Foundry VTT",
   "สเปคเครื่อง (RAM & SSD)",
-  "ลิขสิทธิ์ระบบ",
-  "ชื่อเซิร์ฟเวอร์ & สรุปรายการ",
+  "License Key",
+  "ชื่อเซิร์ฟเวอร์และสรุปรายการ",
 ]);
 
 // Floating sticker visibility state
@@ -695,37 +695,40 @@ const versionOptions = ref([
     id: 14,
     isLatest: true,
     description:
-      "เวอร์ชันล่าสุด เสถียรสูง ประสิทธิภาพดีเยี่ยม รองรับฟังก์ชันใหม่",
+      "เวอร์ชันล่าสุด เสถียร และรองรับฟีเจอร์ใหม่ของ Foundry VTT",
   },
   {
     id: 13,
     isLatest: false,
     description:
-      "เสถียรสูงสุด มีความเข้ากันได้ดีมากกับ Module ยอดนิยมเวอร์ชันเก่า",
+      "เหมาะกับโมดูลรุ่นเก่าที่ต้องการความเข้ากันได้เป็นพิเศษ",
   },
 ]);
 
 const memoryOptions = ref([
   {
     size: 2,
+    label: "ปาร์ตี้เล็ก เล่นทั่วไป",
     extraPrice: 0,
     isPopular: false,
     recommendation:
-      "เหมาะสำหรับปาร์ตี้ขนาดเล็ก (2-4 คน) มีแผนที่และโมดูลทั่วไป",
+      "เหมาะสำหรับผู้เล่น 2-4 คน ใช้แผนที่และโมดูลพื้นฐาน เล่นได้ลื่นในแคมเปญทั่วไป",
   },
   {
     size: 4,
+    label: "ปาร์ตี้มาตรฐาน เล่นได้ครบ",
     extraPrice: 50,
     isPopular: true,
     recommendation:
-      "แนะนำสำหรับปาร์ตี้หลัก (4-8 คน) มีเอฟเฟกต์ สภาพแสง และโมดูลเยอะ",
+      "แนะนำสำหรับผู้เล่น 4-8 คน ใช้เอฟเฟกต์ แสง และโมดูลหลายรายการได้สบาย",
   },
   {
     size: 8,
+    label: "ปาร์ตี้ใหญ่และแคมเปญจัดเต็ม",
     extraPrice: 150,
     isPopular: false,
     recommendation:
-      "ระดับโปร สำหรับปาร์ตี้ขนาดใหญ่ 8 คนขึ้นไป แผนที่ละเอียดสูง 4K เต็มรูปแบบ",
+      "เหมาะสำหรับผู้เล่น 8 คนขึ้นไป ฉากความละเอียดสูง และแคมเปญที่ใช้โมดูลจำนวนมาก",
   },
 ]);
 
@@ -808,12 +811,12 @@ const totalPrice = computed(() => {
 const formattedOrderText = computed(() => {
   const licenseText =
     licenseOption.value === "borrow"
-      ? "ขอยืมคีย์จากทางเรา [+฿50]"
-      : "ใช้คีย์ของตัวเอง [+฿0]";
+      ? "ยืม License Key จากเรา [+฿50]"
+      : "ใช้ License Key ของตัวเอง [+฿0]";
 
   const plutoniumText = plutoniumAddon.value
-    ? "ติดตั้งส่วนเสริม (Plutonium: Heromancer) [+฿29]"
-    : "ไม่ติดตั้ง [+฿0]";
+    ? "ติดตั้ง Heromancer [+฿29]"
+    : "ไม่ติดตั้งส่วนเสริม [+฿0]";
 
   return `[ใบสั่งซื้อเซิร์ฟเวอร์ Foundry VTT - D&D For Us]
 -----------------------------------------
@@ -825,8 +828,8 @@ const formattedOrderText = computed(() => {
 🔑 สถานะสิทธิ์ License: ${licenseText}
 ✨ ส่วนเสริมพรีเมียม: ${plutoniumText}
 -----------------------------------------
-💵 รอบชำระเงิน: ${selectedBillingLabel.value}
-💵 ค่าบริการรวม: ฿${totalPrice.value}
+💵 รอบการชำระเงิน: ${selectedBillingLabel.value}
+💵 ยอดชำระทั้งหมด: ฿${totalPrice.value}
 📌 ราคาเฉลี่ยต่อเดือน: ฿${Math.round(totalPrice.value / selectedBillingMonths.value)}
 -----------------------------------------
 🎉 สนใจรันระบบตามสเปคด้านบนนี้ 🎉`;
@@ -1452,6 +1455,13 @@ const resetForm = () => {
   color: #a0a0a0;
   margin: 0 0 0.4em 0;
   line-height: 1.4;
+}
+
+.memory-spec {
+  display: block;
+  color: #888888;
+  font-size: 0.78em;
+  margin-bottom: 0.25em;
 }
 
 .card-price {
