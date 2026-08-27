@@ -396,7 +396,10 @@
               <span>{{ selectedBillingLabel }}</span>
             </div>
             <div class="summary-row" v-if="billingDiscountAmount > 0">
-              <span>ส่วนลดรอบชำระ</span>
+              <span
+                >ส่วนลดรอบชำระ ({{ selectedBillingTerm?.discountPercent || 0
+                }}%)</span
+              >
               <span>- ฿{{ billingDiscountAmount }}</span>
             </div>
 
