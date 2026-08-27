@@ -87,7 +87,7 @@
                     </span>
                   </div>
                   <p class="card-price">
-                    เริ่มต้น ฿{{ termStartingPrice(term) }}
+                    เริ่มต้นเดือนละ ฿{{ termMonthlyPrice(term) }}
                   </p>
                 </div>
               </div>
@@ -407,7 +407,7 @@
               <span>รวมยอดที่ต้องชำระ</span>
               <span class="total-price"
                 >฿{{ totalPrice }}
-                <span class="per-month">/ {{ selectedBillingLabel }}</span></span
+                <span class="per-month">/ {{ selectedBillingLabel.replace("ราย", "") }}</span></span
               >
             </div>
           </div>
@@ -787,9 +787,9 @@ const billingDiscountAmount = computed(() => {
   );
 });
 
-const termStartingPrice = (term) => {
+const termMonthlyPrice = (term) => {
   return Math.round(
-    basePrice.value * term.months * (1 - term.discountPercent / 100),
+    (basePrice.value * (1 - term.discountPercent / 100)),
   );
 };
 
