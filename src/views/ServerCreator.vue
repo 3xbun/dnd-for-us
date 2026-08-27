@@ -64,7 +64,7 @@
         <!-- STEP 1: Billing Term -->
         <div v-show="currentStep === 1" class="step-container">
           <div class="form-section">
-            <h3>1. เลือกรอบการชำระเงิน</h3>
+            <h3>เลือกรอบการชำระเงิน</h3>
             <p class="section-desc">
               เลือกแผนที่เหมาะกับแคมเปญของคุณ
             </p>
@@ -102,7 +102,7 @@
         <!-- STEP 2: Foundry VTT Version -->
         <div v-show="currentStep === 2" class="step-container">
           <div class="form-section">
-            <h3>2. เลือกเวอร์ชัน Foundry VTT</h3>
+            <h3>เลือกเวอร์ชัน Foundry VTT</h3>
             <p class="section-desc">
               กรุณาเลือกเวอร์ชันที่เหมาะสมกับระบบและ Module ที่ต้องการใช้งาน
             </p>
@@ -134,7 +134,7 @@
         <div v-show="currentStep === 3" class="step-container">
           <!-- Memory Option (RAM) -->
           <div class="form-section">
-            <h3>3. เลือกขนาดหน่วยความจำ (Memory / RAM)</h3>
+            <h3>เลือกสเปคเซิร์ฟเวอร์ (Memory / RAM & SSD)</h3>
             <p class="section-desc">
               จำนวน RAM ที่มากขึ้นช่วยเพิ่มความลื่นไหลเมื่อมีผู้เล่นหลายคน
               หรือเมื่อใส่ Module และฉากขนาดใหญ่
@@ -168,7 +168,7 @@
 
           <!-- Custom Storage Option (SSD Space with 5 GB increments) -->
           <div class="form-section">
-            <h3>4. กำหนดพื้นที่เก็บข้อมูล (Custom SSD Storage)</h3>
+            <h3>กำหนดพื้นที่เก็บข้อมูล (Custom SSD Storage)</h3>
             <p class="section-desc">
               พื้นที่สำหรับจัดเก็บแผนที่, รูปภาพ และไฟล์เสียง (พื้นที่เริ่มต้น 5
               GB ฟรี! เพิ่มเติมคิดราคาเพียง ฿2 ต่อ GB)
@@ -236,7 +236,7 @@
         <!-- STEP 4: Foundry VTT License Option -->
         <div v-show="currentStep === 4" class="step-container">
           <div class="form-section">
-            <h3>5. สิทธิ์การใช้งานลิขสิทธิ์ (Foundry VTT License)</h3>
+            <h3>สิทธิ์การใช้งานลิขสิทธิ์ (Foundry VTT License)</h3>
             <p class="section-desc">
               คุณมี License Key ของตนเองเพื่อใช้ FoundryVTT แล้วหรือไม่?
             </p>
@@ -286,7 +286,7 @@
         <!-- STEP 5: Premium Add-ons & Summary -->
         <div v-show="currentStep === 5" class="step-container">
           <div class="form-section">
-            <h3>5. ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
+            <h3>ตั้งชื่อเซิร์ฟเวอร์ (Server Name)</h3>
             <p class="section-desc">
               ชื่อนี้จะถูกนำไปใช้เป็นชื่อลิงก์สำหรับเข้าเล่นเซิร์ฟเวอร์ของคุณ
               (ภาษาอังกฤษและตัวเลขเท่านั้น)
@@ -331,7 +331,7 @@
 
           <!-- Premium Add-ons -->
           <div class="form-section">
-            <h3>6. ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
+            <h3>ส่วนเสริมพิเศษ (Premium Add-ons)</h3>
             <p class="section-desc">
               เพิ่มขีดความสามารถพิเศษในการเล่นด้วยโมดูลเสริมระดับพรีเมียมที่มีประสิทธิภาพสูงสุด
             </p>
