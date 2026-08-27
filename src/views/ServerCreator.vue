@@ -82,7 +82,11 @@
                 <div class="card-details">
                   <div class="card-title">
                     {{ term.label }}
-                    <span v-if="term.discountPercent > 0" class="badge-gold">
+                    <span
+                      v-if="term.discountPercent > 0"
+                      class="badge-accent discount-badge"
+                    >
+                      <i class="fa-solid fa-duotone fa-tag" aria-hidden="true"></i>
                       ประหยัด {{ term.discountPercent }}%
                     </span>
                   </div>
@@ -1474,6 +1478,12 @@ const resetForm = () => {
   padding: 0.1em 0.5em;
   border-radius: 0.3em;
   font-weight: bold;
+}
+
+.discount-badge {
+  background-color: #db292f;
+  color: #ffffff;
+  font-weight: 800;
 }
 
 /* Summary Panel CSS */
