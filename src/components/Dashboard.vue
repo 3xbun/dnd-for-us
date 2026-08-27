@@ -165,7 +165,7 @@
             <span>
               <strong>{{
                 sale.fields?.Owner?.fields?.FacebookName || "ไม่ทราบชื่อ"
-              }}</strong>
+              }}</strong> <br>
               <span class="server-badge">{{ sale.fields?.ServerID }}</span>
             </span>
             <span class="product-title">
